@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import dateDialoguri from '../texte/dialoguri.json';
-import '../components_css/CutieDialog.css'; 
+import '../components_css/CutieDialog.css';
 
 export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -21,32 +21,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
   ];
 
-  // Modulele de pe jos (4, 5, 6, 7) — fiecare are poza lui + clasa de poziție pe podea
+  // Modulele/pozele de jos (era numit "moduleJos" dar folosit ca "moduleJosPoze" - de aici venea eroarea)
   const moduleJosPoze = [
-    { 
-      id: 'modul-4', 
-      clasa: 'panou-stanga-jos', 
-      titlu: 'Modul 4', 
-      imagine: '/assets/modul4.jpg' // Schimbă cu calea ta către poză
-    },
-    { 
-      id: 'modul-5', 
-      clasa: 'panou-centru-jos-1', 
-      titlu: 'Modul 5', 
-      imagine: '/assets/modul5.jpg' 
-    },
-    { 
-      id: 'modul-6', 
-      clasa: 'panou-centru-jos-2', 
-      titlu: 'Modul 6', 
-      imagine: '/assets/modul6.jpg' 
-    },
-    { 
-      id: 'modul-7', 
-      clasa: 'panou-dreapta-jos', 
-      titlu: 'Modul 7', 
-      imagine: '/assets/modul7.jpg' 
-    },
+    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
+    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
+    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
+    { id: 'm7', clasa: 'modul-dreapta-jos', titlu: 'Modul 7', imagine: '/bun.jpeg' },
   ];
 
   // Schimbă poza selectată (Stânga / Dreapta)
@@ -75,7 +55,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     const textComplet = dialogCurent.linii[indexLinie];
     let indexCurent = 0;
 
-    setTextAfisat(''); 
+    setTextAfisat('');
     setIsTyping(true);
 
     const interval = setInterval(() => {
@@ -87,7 +67,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         setIsTyping(false);
         clearInterval(interval);
       }
-    }, 30); 
+    }, 30);
 
     return () => clearInterval(interval);
   }, [indexLinie, dialogCurent]);
@@ -105,14 +85,14 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
-        e.preventDefault(); 
+        e.preventDefault();
         actiuneTreciMaiDeparte();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTyping, indexLinie, dialogCurent, onDialogTerminat]); 
+  }, [isTyping, indexLinie, dialogCurent, onDialogTerminat]);
 
   if (!dialogCurent) return null;
 
@@ -130,7 +110,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   return (
     <div className="dialog-overlay">
-       <div 
+      <div
         className="cursor-lumina"
         style={{
           left: `${mousePos.x}px`,
@@ -138,13 +118,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         }}
       />
 
-       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`} />
+      <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`} />
 
-       <button className="buton-comutator-lumina" onClick={SchimbaLumina}>
+      <button className="buton-comutator-lumina" onClick={SchimbaLumina}>
         💡 Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
       </button>
 
-       {estePenultimulSauMaiDeparte && (
+      {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
           <div className="bec-container">
             <div className="fir-bec" />
@@ -155,7 +135,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           <div className="panou-lateral panou-dreapta" />
 
           <div className="container-panouri-central">
-             {panouriSus.map((panou) => (
+            {panouriSus.map((panou) => (
               <button
                 key={panou.id}
                 className={`panou-card ${panou.clasa}`}
@@ -165,7 +145,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </button>
             ))}
 
-             {moduleJosPoze.map((modul, idx) => {
+            {moduleJosPoze.map((modul, idx) => {
               const esteSelectat = idx === indexModulJos;
               return (
                 <div
@@ -176,19 +156,19 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                     handlePanouClick(e, modul.id);
                   }}
                 >
-                  <img 
-                    src={modul.imagine} 
-                    alt={modul.titlu} 
+                  <img
+                    src={modul.imagine}
+                    alt={modul.titlu}
                     onError={(e) => {
-                       e.target.style.display = 'none';
-                    }} 
+                      e.target.style.display = 'none';
+                    }}
                   />
                   <div className="tag-modul-jos">{modul.titlu}</div>
                 </div>
               );
             })}
 
-             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
+            <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
               <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
               <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
             </div>
@@ -197,22 +177,22 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         </div>
       )}
 
-       <div 
-        className="dialog-box" 
+      <div
+        className="dialog-box"
         onClick={actiuneTreciMaiDeparte}
         style={{ cursor: isTyping ? 'default' : 'pointer' }}
       >
         <div className="dialog-name">
           {dialogCurent.titlu}
         </div>
-        
+
         <p className="dialog-text">
           {textAfisat}
           <span className="cursor-blink">|</span>
         </p>
-        
-        <div 
-          className="dialog-hint" 
+
+        <div
+          className="dialog-hint"
           style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}
         >
           Press Space to continue ▼
