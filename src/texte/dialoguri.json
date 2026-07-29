@@ -1,0 +1,30 @@
+{
+  "dialoguri": {
+    "intro_camera": {
+      "id": "intro_camera",
+      "titlu": "Dean",
+      "linii": [
+        "The door just locked behind me.",
+        "It looks like I need to find a way out before time runs out.",
+        "I should investigate the objects around here."
+      ]
+    },
+    "obiect_chimie": {
+      "id": "obiect_chimie",
+      "titlu": "Dean",
+      "linii": [
+        "What are these?",
+        "There are three test tubes with colored liquids.",
+        "Am I supposed to do something with them? Maybe if I mix them..."
+      ]
+    },
+    "obiect_calculator": {
+      "id": "obiect_calculator",
+      "titlu": "Dean",
+      "linii": [
+        "The screen is covered in dust, but it still works.",
+        "It's asking for some kind of special formatting to run the program."
+      ]
+    }
+  }
+}

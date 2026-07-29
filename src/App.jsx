@@ -1,36 +1,25 @@
-import { useState, useEffect } from "react";
-import StartScreen from "./components/StartScreen";
-//import DarkRoom from "./components/DarkRoom.jsx";
-import "./App.css";
-
-const STORAGE_KEY = "escapeRoomProgress";
+import { useState } from 'react';
+import StartScreen from './components/StartScreen'; // Componenta ta inițială
+import CameraPrincipala from './components/DarkRoom'; // Camera cu obiecte
 
 function App() {
-  const [started, setStarted] = useState(false);
-  const [solved, setSolved] = useState([false, false, false]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const data = JSON.parse(saved);
-      setStarted(data.started);
-      setSolved(data.solved);
-    }
-  }, []);
-
-  useEffect(() => {
-    const data = { started, solved };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [started, solved]);
+  // Starea care decide ce componentă se afișează
+  const [ecranCurent, setEcranCurent] = useState('start');
 
   return (
-    <>
-      {!started ? (
-        <StartScreen onStart={() => setStarted(true)} />
-      ) : (
-        <DarkRoom solved={solved} setSolved={setSolved} />
+    <div style={{ width: '100%', height: '100vh', margin: 0, padding: 0 }}>
+      
+      {/* Dacă suntem la început, afișăm ecranul de start */}
+      {ecranCurent === 'start' && (
+        <StartScreen onStart={() => setEcranCurent('joc')} />
       )}
-    </>
+
+      {/* Dacă a apăsat 'ÎNCEPE', afișăm camera */}
+      {ecranCurent === 'joc' && (
+        <CameraPrincipala />
+      )}
+
+    </div>
   );
 }
 
