@@ -8,25 +8,9 @@ export default function CameraPrincipala() {
 
   return (
     <div className="camera-container">
-      <h2 className="camera-title">Laboratorul Secret</h2>
-      <p className="camera-hint">Apasă pe obiectele din cameră pentru a le investiga.</p>
 
-      {/* Obiect 1: Masa de Chimie */}
-      <div 
-        className="obiect-interactiv chimie"
-        onClick={() => setDialogActiv('obiect_chimie')}
-      >
-        Masa de Chimie
-      </div>
 
-      {/* Obiect 2: Calculatorul */}
-      <div 
-        className="obiect-interactiv calculator"
-        onClick={() => setDialogActiv('obiect_calculator')}
-      >
-        Terminal Vechi
-      </div>
-
+     
       {/* Aici e logica care afișează dialogul dacă dialogActiv NU este null */}
       {dialogActiv && (
         <CutieDialog 

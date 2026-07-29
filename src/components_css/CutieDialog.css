@@ -1,53 +1,66 @@
+/* --- FONTUL CUSTOM --- */
+@font-face {
+  font-family: 'FontDialog';
+  src: url('../assets/fonts/PixelifySans-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
+/* --- CONTAINERUL PRINCIPAL (Ocupă tot ecranul pentru efecte) --- */
 .dialog-overlay {
   position: fixed;
-  bottom: 30px;
+  top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
+  align-items: flex-end; /* Așează caseta de dialog jos */
+  padding-bottom: 25px;
   z-index: 9999;
+  pointer-events: none; /* Permite click-uri pe fundal dacă este cazul */
 }
 
-
+/* --- CASETA DE DIALOG --- */
 .dialog-box {
-  width: 80%;
-  max-width: 800px;
-  min-height: 120px;
+  width: 65%;
+  max-width: 650px;
+  min-height: 95px;
   background-color: rgb(0, 2, 7); 
   border-radius: 8px;
-  padding: 25px 30px;
+  padding: 15px 25px;
   position: relative;
   cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 10;
+  pointer-events: auto; /* Reinstalează interacțiunea cu caseta */
 }
-
 
 .dialog-name {
   position: absolute;
   top: -15px;
-  left: 20px;
+  left: 10px;
   background-color: transparent;
   backdrop-filter: blur(10px);
   padding: 4px 15px;
-  border-radius: 4px;
+  border-radius: 15px;
   font-weight: bold;
   font-size: 1.1rem;
   letter-spacing: 1px;
-  border-radius: 15px;
 }
 
 .dialog-text {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.5;
   margin: 0;
-  margin-top: 10px;
-  min-height: 55px; 
+  margin-top: 5px;
+  min-height: 45px;
+  font-family: 'FontDialog', sans-serif;
 }
 
-
+/* --- CURSORUL TASTATOR --- */
 .cursor-blink {
   animation: blink 1s step-end infinite;
   color: #9ca3af;
@@ -59,6 +72,7 @@
   50% { opacity: 0; }
 }
 
+/* --- HINT APASARE TAȘTĂ --- */
 .dialog-hint {
   position: absolute;
   bottom: 10px;
@@ -71,4 +85,88 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* --- FUNDAL EFECTE --- */
+.fundal-efecte {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* --- BEC SUS ÎN DREAPTA --- */
+.bec-container {
+  position: absolute;
+  top: 0;
+  right: 22%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadaIn 0.6s ease-in-out forwards;
+}
+
+.fir-bec {
+  width: 3px;
+  height: 130px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.bec-lumina {
+  width: 36px;
+  height: 36px;
+  background-color: #fffbcf;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 20px #ffea79,
+    0 0 45px #ffea79,
+    0 0 75px #ffd000,
+    0 0 120px rgba(255, 208, 0, 0.8);
+}
+
+/* --- PANOURI LATERALE CU GLOW --- */
+.panou-lateral {
+  position: absolute;
+  background: rgba(18, 24, 38, 0.75);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  animation: fadaIn 0.8s ease-in-out forwards;
+}
+
+/* Panoul Stânga - Înalt */
+.panou-stanga {
+  top: 15%;
+  left: 30px;
+  width: 110px;
+  height: 60vh;
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  box-shadow: 
+    0 0 20px rgba(0, 229, 255, 0.3),
+    inset 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+/* Panoul Dreapta - Scurt */
+.panou-dreapta {
+  top: 35%;
+  right: 30px;
+  width: 140px;
+  height: 32vh;
+  border: 1px solid rgba(157, 0, 255, 0.5);
+  box-shadow: 
+    0 0 20px rgba(157, 0, 255, 0.3),
+    inset 0 0 15px rgba(157, 0, 255, 0.2);
+}
+
+@keyframes fadaIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
