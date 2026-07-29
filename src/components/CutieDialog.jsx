@@ -8,7 +8,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [isTyping, setIsTyping] = useState(true);
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
-
+  const [dialogTerminat, setDialogTerminat] = useState(false);
   // Indexul modulului/pozei selectate de pe jos (0 = Modul 4, 1 = Modul 5, etc.)
   const [indexModulJos, setIndexModulJos] = useState(0);
 
@@ -78,10 +78,10 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     if (indexLinie < dialogCurent.linii.length - 1) {
       setIndexLinie(prev => prev + 1);
     } else {
-      onDialogTerminat();
+      setDialogTerminat(true); // Ascundem doar caseta de text!
+      if (onDialogTerminat) onDialogTerminat();
     }
   };
-
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
@@ -177,27 +177,29 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         </div>
       )}
 
-      <div
-        className="dialog-box"
-        onClick={actiuneTreciMaiDeparte}
-        style={{ cursor: isTyping ? 'default' : 'pointer' }}
-      >
-        <div className="dialog-name">
-          {dialogCurent.titlu}
-        </div>
-
-        <p className="dialog-text">
-          {textAfisat}
-          <span className="cursor-blink">|</span>
-        </p>
-
+      {!dialogTerminat && (
         <div
-          className="dialog-hint"
-          style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}
+          className="dialog-box"
+          onClick={actiuneTreciMaiDeparte}
+          style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
-          Press Space to continue ▼
+          <div className="dialog-name">
+            {dialogCurent.titlu}
+          </div>
+
+          <p className="dialog-text">
+            {textAfisat}
+            <span className="cursor-blink">|</span>
+          </p>
+
+          <div
+            className="dialog-hint"
+            style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}
+          >
+            Press Space to continue ▼
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
