@@ -8,14 +8,13 @@ export default function CameraPrincipala() {
 
   return (
     <div className="camera-container">
-
-
-     
-      {/* Aici e logica care afișează dialogul dacă dialogActiv NU este null */}
       {dialogActiv && (
-        <CutieDialog 
-          dialogId={dialogActiv} 
-          onDialogTerminat={() => setDialogActiv(null)} 
+        <CutieDialog
+          dialogId={dialogActiv}
+          onDialogTerminat={() => {
+            console.log("Dialogul s-a terminat, dar păstrăm fundalul și modulele pe ecran!");
+            // Nu mai facem setDialogActiv(null);
+          }}
         />
       )}
     </div>
