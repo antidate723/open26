@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'FontDialog';
-  src: url('../assets/fonts/PixelifySans-Regular.ttf') format('truetype');
+  src: url('fonts/PixelifySans-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -49,12 +49,14 @@
 }
 
 .dialog-text {
+
+  font-family: 'FontDialog';
   font-size: 1.1rem;
   line-height: 1.5;
   margin: 0;
   margin-top: 5px;
   min-height: 45px;
-  font-family: 'FontDialog', sans-serif;
+  
 }
 
 .cursor-blink {
