@@ -54,7 +54,7 @@
   margin: 0;
   margin-top: 5px;
   min-height: 45px;
-  font-family: 'FontDialog', sans-serif;
+  font-family: 'FontDialog';
 }
 
 .cursor-blink {
