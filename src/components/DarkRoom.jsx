@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import CutieDialog from '../components/CutieDialog'; // Importă componenta de dialog
+import CutieDialog from '../components/CutieDialog'; 
 import '../components_css/DarkRoom.css'
 
 export default function CameraPrincipala() {
