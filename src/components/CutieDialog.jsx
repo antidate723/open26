@@ -6,10 +6,69 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [indexLinie, setIndexLinie] = useState(0);
   const [textAfisat, setTextAfisat] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [nivelLumina, setNivelLumina] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+
+  // Indexul modulului/pozei selectate de pe jos (0 = Modul 4, 1 = Modul 5, etc.)
+  const [indexModulJos, setIndexModulJos] = useState(0);
 
   const dialogCurent = dateDialoguri.dialoguri[dialogId];
 
-  // 1. Efectul pentru scrierea textului (Typewriter)
+  // Panourile fixe de sus
+  const panouriSus = [
+    { id: 'sus-centru', clasa: 'panou-sus-centru', text: 'Modul 1' },
+    { id: 'stanga-sus', clasa: 'panou-stanga-sus', text: 'Modul 2' },
+    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
+  ];
+
+  // Modulele de pe jos (4, 5, 6, 7) — fiecare are poza lui + clasa de poziție pe podea
+  const moduleJosPoze = [
+    { 
+      id: 'modul-4', 
+      clasa: 'panou-stanga-jos', 
+      titlu: 'Modul 4', 
+      imagine: '/assets/modul4.jpg' // Schimbă cu calea ta către poză
+    },
+    { 
+      id: 'modul-5', 
+      clasa: 'panou-centru-jos-1', 
+      titlu: 'Modul 5', 
+      imagine: '/assets/modul5.jpg' 
+    },
+    { 
+      id: 'modul-6', 
+      clasa: 'panou-centru-jos-2', 
+      titlu: 'Modul 6', 
+      imagine: '/assets/modul6.jpg' 
+    },
+    { 
+      id: 'modul-7', 
+      clasa: 'panou-dreapta-jos', 
+      titlu: 'Modul 7', 
+      imagine: '/assets/modul7.jpg' 
+    },
+  ];
+
+  // Schimbă poza selectată (Stânga / Dreapta)
+  const navigaPoze = (directie, e) => {
+    e.stopPropagation();
+    setIndexModulJos((prev) => {
+      let urmatorul = prev + directie;
+      if (urmatorul >= moduleJosPoze.length) return 0;
+      if (urmatorul < 0) return moduleJosPoze.length - 1;
+      return urmatorul;
+    });
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   useEffect(() => {
     if (!dialogCurent) return;
 
@@ -17,7 +76,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     let indexCurent = 0;
 
     setTextAfisat(''); 
-    setIsTyping(true); // Începem procesul de tastare
+    setIsTyping(true);
 
     const interval = setInterval(() => {
       if (indexCurent < textComplet.length) {
@@ -25,7 +84,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         setTextAfisat(bucataDeText);
         indexCurent++;
       } else {
-        setIsTyping(false); // Am terminat de tastat
+        setIsTyping(false);
         clearInterval(interval);
       }
     }, 30); 
@@ -33,14 +92,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     return () => clearInterval(interval);
   }, [indexLinie, dialogCurent]);
 
-  // Funcția pentru avansarea în dialog
   const actiuneTreciMaiDeparte = () => {
-    // Dacă încă se tastează, blocăm avansarea
-    if (isTyping) {
-      return; 
-    }
+    if (isTyping) return;
 
-    // Dacă a terminat de tastat, trecem la linia următoare sau închidem dialogul
     if (indexLinie < dialogCurent.linii.length - 1) {
       setIndexLinie(prev => prev + 1);
     } else {
@@ -48,7 +102,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     }
   };
 
-  // 2. Event Listener global pentru Tasta Space
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
@@ -58,35 +111,93 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isTyping, indexLinie, dialogCurent, onDialogTerminat]); 
 
   if (!dialogCurent) return null;
 
-  // Verificăm dacă suntem la penultimul mesaj sau mai departe pentru efectele vizuale
   const estePenultimulSauMaiDeparte = indexLinie >= dialogCurent.linii.length - 2;
+
+  const SchimbaLumina = (e) => {
+    e.stopPropagation();
+    setNivelLumina(prev => (prev < 3 ? prev + 1 : 0));
+  };
+
+  const handlePanouClick = (e, panouId) => {
+    e.stopPropagation();
+    console.log(`Ai apăsat pe poza/modulul: ${panouId}`);
+  };
 
   return (
     <div className="dialog-overlay">
-      {/* Elementele de fundal activate la penultimul mesaj */}
-      {estePenultimulSauMaiDeparte && (
+       <div 
+        className="cursor-lumina"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
+        }}
+      />
+
+       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`} />
+
+       <button className="buton-comutator-lumina" onClick={SchimbaLumina}>
+        💡 Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
+      </button>
+
+       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
-          {/* Becul sus în dreapta */}
           <div className="bec-container">
             <div className="fir-bec" />
-            <div className="bec-lumina" />
+            <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`} />
           </div>
 
-          {/* Panou Stânga - Înalt */}
           <div className="panou-lateral panou-stanga" />
-
-          {/* Panou Dreapta - Scurt */}
           <div className="panou-lateral panou-dreapta" />
+
+          <div className="container-panouri-central">
+             {panouriSus.map((panou) => (
+              <button
+                key={panou.id}
+                className={`panou-card ${panou.clasa}`}
+                onClick={(e) => handlePanouClick(e, panou.id)}
+              >
+                <span>{panou.text}</span>
+              </button>
+            ))}
+
+             {moduleJosPoze.map((modul, idx) => {
+              const esteSelectat = idx === indexModulJos;
+              return (
+                <div
+                  key={modul.id}
+                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''}`}
+                  onClick={(e) => {
+                    setIndexModulJos(idx);
+                    handlePanouClick(e, modul.id);
+                  }}
+                >
+                  <img 
+                    src={modul.imagine} 
+                    alt={modul.titlu} 
+                    onError={(e) => {
+                       e.target.style.display = 'none';
+                    }} 
+                  />
+                  <div className="tag-modul-jos">{modul.titlu}</div>
+                </div>
+              );
+            })}
+
+             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
+              <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
+              <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
+            </div>
+
+          </div>
         </div>
       )}
 
-      <div 
+       <div 
         className="dialog-box" 
         onClick={actiuneTreciMaiDeparte}
         style={{ cursor: isTyping ? 'default' : 'pointer' }}
