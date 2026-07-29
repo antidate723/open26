@@ -1,0 +1,46 @@
+.start-container {
+  height: 100vh;
+  width: 100%;
+  background-color: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #e8e6df;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.start-title {
+  font-size: 4.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
+}
+
+.start-text {
+  color: #b0aea3;
+  font-size: 1.3rem;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.start-button {
+  padding: 16px 48px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background-color: transparent;
+  border: 2px solid #9a988f;
+  border-radius: 8px;
+  color: #e8e6df;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Efectul de hover pe bordură (l-am scos din whileHover și l-am pus aici) */
+.start-button:hover {
+  border-color: #ff8c00;
+}
