@@ -26,15 +26,22 @@
         "The screen is blinking... it needs some kind of text formatting to process the command.",
         "Let's see if I remember how to write this syntax." ]
     },
-    "masa_mate":{
-      "id" : "masa_mate",
-      "titlu" : "Dean",
-      "linii" : 
-      [
+    "masa_mate": {
+      "id": "masa_mate",
+      "titlu": "Dean",
+      "linii": [
         "Hmm... what's this?",
         "Just a dusty piece of paper abandoned on the desk...",
         "Wait, these are number sequences. It looks like an old security protocol left behind by the engineers.",
         "Let's see if I can crack the pattern."
+      ]
+    },
+    "modul_muzica": {
+      "titlu": "Sistem Acustic",
+      "linii": [
+        "O frecvență ciudată începe să pulseze în pereți...",
+        "Aflu un ritm ascuns în ecourile încăperii.",
+        "Trebuie să potrivesc semnalele audio în ordinea corectă!"
       ]
     }
   }
