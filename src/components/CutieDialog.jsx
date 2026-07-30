@@ -9,8 +9,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
-  const [caruselDeschis, setCaruselDeschis] = useState(false);
-  const [indexCarusel, setIndexCarusel] = useState(0);
+  
+  // Indexul care controlează STRICT caruselul (primele 3 poze)
+  const [indexModulJos, setIndexModulJos] = useState(0);
 
   const dialogCurent = dateDialoguri.dialoguri[dialogId];
 
@@ -20,19 +21,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
   ];
 
-  // Imaginile din carusel
-  const imaginiCarusel = [
-    { id: 'img1', titlu: 'Imaginea 1', src: '/bun.jpeg', descriere: 'Descriere prima imagine' },
-    { id: 'img2', titlu: 'Imaginea 2', src: '/bun.jpeg', descriere: 'Descriere a doua imagine' },
-    { id: 'img3', titlu: 'Imaginea 3', src: 'masabtn.png', descriere: 'Descriere a treia imagine' },
+  // Acestea 3 sunt legate de săgeți (Carusel)
+  const moduleJosPoze = [
+    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
+    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
+    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
   ];
 
-  const navigareCarusel = (directie, e) => {
-    if (e) e.stopPropagation();
-    setIndexCarusel((prev) => {
+  // Asta e doar o poză statică pe care poți da click (NU face parte din săgeți)
+  const modulMasa = { 
+    id: 'm8', 
+    clasa: 'modul-stanga-centru-jos', 
+    titlu: 'Modulul 8', 
+    imagine: '/masabtn.png' 
+  };
+
+  // Navigarea se face STRICT pe array-ul moduleJosPoze
+  const navigaPoze = (directie, e) => {
+    e.stopPropagation();
+    setIndexModulJos((prev) => {
       let urmatorul = prev + directie;
-      if (urmatorul >= imaginiCarusel.length) return 0;
-      if (urmatorul < 0) return imaginiCarusel.length - 1;
+      
+      if (urmatorul >= moduleJosPoze.length) return 0;
+      if (urmatorul < 0) return moduleJosPoze.length - 1;
+      
       return urmatorul;
     });
   };
@@ -150,59 +162,46 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </button>
             ))}
 
-            {/* Singurul modul din dreapta jos */}
-            <div
-              className="modul-poza-jos modul-dreapta-jos"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCaruselDeschis(true);
-              }}
-            >
-              <img src="/bun.jpeg" alt="Galerie Imagini" />
-              <div className="tag-modul-jos">Galerie</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* POPUP MODAL CARUSEL */}
-      {caruselDeschis && (
-        <div className="modal-carusel-overlay" onClick={() => setCaruselDeschis(false)}>
-          <div className="modal-carusel-content" onClick={(e) => e.stopPropagation()}>
-            <button className="inchide-modal" onClick={() => setCaruselDeschis(false)}>
-              ✕
-            </button>
-
-            <div className="carusel-view">
-              <button className="sageata-carusel prev" onClick={(e) => navigareCarusel(-1, e)}>
-                ❮
-              </button>
-
-              <div className="carusel-slide-container fade">
-                <img
-                  src={imaginiCarusel[indexCarusel].src}
-                  alt={imaginiCarusel[indexCarusel].titlu}
-                  className="carusel-imagine"
-                />
-                <div className="carusel-detalii">
-                  <h3>{imaginiCarusel[indexCarusel].titlu}</h3>
-                  <p>{imaginiCarusel[indexCarusel].descriere}</p>
+            {/* 2. POZELE DIN CARUSEL (Doar 4, 5 și 6 sunt afectate de săgeți) */}
+            {moduleJosPoze.map((modul, idx) => {
+              const esteSelectat = idx === indexModulJos;
+              return (
+                <div
+                  key={modul.id}
+                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''}`}
+                  onClick={(e) => {
+                    setIndexModulJos(idx);
+                    handlePanouClick(e, modul.id);
+                  }}
+                >
+                  <img
+                    src={modul.imagine}
+                    alt={modul.titlu}
+                    onError={(e) => console.error("Eroare poză:", modul.imagine)}
+                  />
+                  <div className="tag-modul-jos">{modul.titlu}</div>
                 </div>
-              </div>
+              );
+            })}
 
-              <button className="sageata-carusel next" onClick={(e) => navigareCarusel(1, e)}>
-                ❯
-              </button>
+            {/* 3. MASA (Statică, independentă de săgeți) */}
+            <div
+              key={modulMasa.id}
+              className={`modul-poza-jos ${modulMasa.clasa}`}
+              onClick={(e) => handlePanouClick(e, modulMasa.id)}
+            >
+              <img
+                src={modulMasa.imagine}
+                alt={modulMasa.titlu}
+                onError={(e) => console.error("Eroare poză:", modulMasa.imagine)}
+              />
+              <div className="tag-modul-jos">{modulMasa.titlu}</div>
             </div>
 
-            <div className="dots-container">
-              {imaginiCarusel.map((_, i) => (
-                <span
-                  key={i}
-                  className={`dot ${i === indexCarusel ? 'active' : ''}`}
-                  onClick={() => setIndexCarusel(i)}
-                />
-              ))}
+            {/* 4. SĂGEȚILE */}
+            <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
+              <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
+              <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
             </div>
           </div>
         </div>

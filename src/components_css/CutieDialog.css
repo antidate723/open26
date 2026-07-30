@@ -1,7 +1,6 @@
 @font-face {
   font-family: 'FontDialog';
-  src: url('fonts/PixelifySans-Regular.ttf') format('truetype');
-  src: url('fonts/PixelifySans-Regular.ttf') format('truetype');
+  src: url('/fonts/PixelifySans-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -12,10 +11,16 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  background-image: url('/backround.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
-  justify-content: center;
-  align-items: flex-end; 
-  padding-bottom: 25px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 2rem;
+  overflow: hidden;
   z-index: 9999;
   pointer-events: none; 
 }
@@ -50,14 +55,12 @@
 }
 
 .dialog-text {
-
-  font-family: 'FontDialog';
+  font-family: 'FontDialog', sans-serif;
   font-size: 1.1rem;
   line-height: 1.5;
   margin: 0;
   margin-top: 5px;
   min-height: 45px;
-  font-family: 'FontDialog', sans-serif;
 }
 
 .cursor-blink {
@@ -71,7 +74,7 @@
   50% { opacity: 0; }
 }
 
- .dialog-hint {
+.dialog-hint {
   position: absolute;
   bottom: 10px;
   right: 15px;
@@ -85,7 +88,7 @@
   50% { opacity: 0.5; }
 }
 
- .fundal-efecte {
+.fundal-efecte {
   position: absolute;
   top: 0;
   left: 0;
@@ -95,7 +98,7 @@
   z-index: 1;
 }
 
- .bec-container {
+.bec-container {
   position: absolute;
   top: 0;
   right: 22%;
@@ -121,9 +124,10 @@
     0 0 45px #ffea79,
     0 0 75px #ffd000,
     0 0 120px rgba(255, 208, 0, 0.8);
+  transition: box-shadow 0.8s ease, background-color 0.8s ease;
 }
 
- .panou-lateral {
+.panou-lateral {
   position: absolute;
   background: rgba(18, 24, 38, 0.75);
   border-radius: 12px;
@@ -131,51 +135,34 @@
   animation: fadaIn 0.8s ease-in-out forwards;
 }
 
-/* --- POZIȚIONARE PANOURI LATERALE PE ELEMENTELE DE FUNDAL --- */
-/* Panoul înalt din stânga - Suprapus pe elementul albastru vertical */
 .panou-lateral.panou-stanga {
-  position: absolute;
   top: 15%;
   left: 1.5%;
   width: 5.5%;
   height: 58%;
   border: 2px solid rgba(0, 229, 255, 0.6);
-  border-radius: 12px;
-  box-shadow: 
-    0 0 20px rgba(0, 229, 255, 0.4),
-    inset 0 0 15px rgba(0, 229, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.2);
   background: rgba(10, 15, 25, 0.3);
   backdrop-filter: blur(2px);
 }
 
-/* Panoul din dreapta - Suprapus pe zona mov de pe pilon */
 .panou-lateral.panou-dreapta {
-  position: absolute;
   top: 32%;
   right: 1.5%;
   width: 5.5%;
   height: 42%;
   border: 2px solid rgba(180, 70, 255, 0.6);
-  border-radius: 12px;
-  box-shadow: 
-    0 0 20px rgba(180, 70, 255, 0.4),
-    inset 0 0 15px rgba(180, 70, 255, 0.2);
+  box-shadow: 0 0 20px rgba(180, 70, 255, 0.4), inset 0 0 15px rgba(180, 70, 255, 0.2);
   background: rgba(10, 15, 25, 0.3);
   backdrop-filter: blur(2px);
 }
 
 @keyframes fadaIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
- .container-panouri-central {
+.container-panouri-central {
   position: absolute;
   top: 0;
   left: 0;
@@ -184,7 +171,7 @@
   pointer-events: auto;  
 }
 
- .panou-card {
+.panou-card {
   position: absolute;
   background: rgba(18, 24, 38, 0.85);
   border: 1px solid rgba(255, 75, 75, 0.6);
@@ -197,47 +184,22 @@
   justify-content: center;
   cursor: pointer;
   backdrop-filter: blur(6px);
-  box-shadow: 
-    0 0 15px rgba(255, 75, 75, 0.25),
-    inset 0 0 10px rgba(255, 75, 75, 0.15);
+  box-shadow: 0 0 15px rgba(255, 75, 75, 0.25), inset 0 0 10px rgba(255, 75, 75, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   animation: fadaIn 0.8s ease-in-out forwards;
 }
 
- .panou-card:hover {
+.panou-card:hover {
   transform: scale(1.05) translateY(-3px);
   border-color: rgba(255, 120, 120, 0.9);
-  box-shadow: 
-    0 0 25px rgba(255, 75, 75, 0.5),
-    inset 0 0 15px rgba(255, 75, 75, 0.3);
+  box-shadow: 0 0 25px rgba(255, 75, 75, 0.5), inset 0 0 15px rgba(255, 75, 75, 0.3);
 }
 
-/* --- POZIȚIONARE MODULE SUS (1, 2, 3) ÎN JURUL ARCADEI --- */
-/* Modulul 1 - Coborât chiar deasupra porții centrale */
- .panou-sus-centru {
-  top: 18%;
-  left: 46.5%;
-  width: 90px;
-  height: 65px;
-}
+.panou-sus-centru { top: 18%; left: 46.5%; width: 90px; height: 65px; }
+.panou-stanga-sus { top: 34%; left: 22%; width: 90px; height: 65px; }
+.panou-dreapta-sus { top: 34%; right: 25%; width: 90px; height: 65px; }
 
-/* Modulul 2 - În stânga porții */
- .panou-stanga-sus {
-  top: 34%;
-  left: 22%;
-  width: 90px;
-  height: 65px;
-}
-
-/* Modulul 3 - În dreapta porții */
- .panou-dreapta-sus {
-  top: 34%;
-  right: 25%;
-  width: 90px;
-  height: 65px;
-}
-
- .overlay-intuneric {
+.overlay-intuneric {
   position: fixed;
   top: 0;
   left: 0;
@@ -249,41 +211,15 @@
   transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
- .overlay-intuneric.lumina-nivel-0 {
-  opacity: 0.92;
-}
+.overlay-intuneric.lumina-nivel-0 { opacity: 0.92; }
+.overlay-intuneric.lumina-nivel-1 { opacity: 0.65; }
+.overlay-intuneric.lumina-nivel-2 { opacity: 0.33; }
+.overlay-intuneric.lumina-nivel-3 { opacity: 0; }
 
- .overlay-intuneric.lumina-nivel-1 {
-  opacity: 0.65;
-}
-
- .overlay-intuneric.lumina-nivel-2 {
-  opacity: 0.33;
-}
-
-.overlay-intuneric.lumina-nivel-3 {
-  opacity: 0;
-}
-
-.bec-lumina {
-  transition: box-shadow 0.8s ease, background-color 0.8s ease;
-}
-
-.bec-lumina-nivel-0 {
-  box-shadow: 0 0 15px #ffea79, 0 0 30px rgba(255, 208, 0, 0.4);
-}
-
-.bec-lumina-nivel-1 {
-  box-shadow: 0 0 25px #ffea79, 0 0 55px #ffd000, 0 0 90px rgba(255, 208, 0, 0.6);
-}
-
-.bec-lumina-nivel-2 {
-  box-shadow: 0 0 35px #ffea79, 0 0 75px #ffd000, 0 0 130px rgba(255, 208, 0, 0.8);
-}
-
-.bec-lumina-nivel-3 {
-  box-shadow: 0 0 50px #ffffff, 0 0 100px #ffea79, 0 0 160px #ffd000;
-}
+.bec-lumina-nivel-0 { box-shadow: 0 0 15px #ffea79, 0 0 30px rgba(255, 208, 0, 0.4); }
+.bec-lumina-nivel-1 { box-shadow: 0 0 25px #ffea79, 0 0 55px #ffd000, 0 0 90px rgba(255, 208, 0, 0.6); }
+.bec-lumina-nivel-2 { box-shadow: 0 0 35px #ffea79, 0 0 75px #ffd000, 0 0 130px rgba(255, 208, 0, 0.8); }
+.bec-lumina-nivel-3 { box-shadow: 0 0 50px #ffffff, 0 0 100px #ffea79, 0 0 160px #ffd000; }
 
 .buton-comutator-lumina {
   position: absolute;
@@ -308,162 +244,32 @@
   box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
 }
 
- .cursor-lumina {
+.cursor-lumina {
   position: fixed;
   width: 350px;
   height: 350px;
   border-radius: 50%;
   pointer-events: none;  
   transform: translate(-50%, -50%);  
-  background: radial-gradient(
-    circle, 
-    rgba(0, 229, 255, 0.25) 0%, 
-    rgba(0, 229, 255, 0.08) 40%, 
-    rgba(0, 0, 0, 0) 70%
-  );
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(0, 229, 255, 0.08) 40%, rgba(0, 0, 0, 0) 70%);
   z-index: 3;  
   transition: width 0.2s ease, height 0.2s ease;
 }
 
-
-.carusel-wrapper-jos {
-  position: absolute;
-  bottom: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 420px;
-  z-index: 20;
-  pointer-events: auto;
-}
-
-.slideshow-container {
-  position: relative;
-  width: 100%;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mySlides {
-  display: none;
-  width: 100%;
-  height: 100%;
-}
-
-.mySlides.slide-activ {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Cardul din carusel */
-.panou-carusel-item {
-  position: relative !important;
-  width: 260px !important;
-  height: 95px !important;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.panou-carusel-item h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #00e5ff;
-}
-
-.panou-carusel-item p {
-  margin: 0;
-  font-size: 0.8rem;
-  color: #d1d5db;
-}
-
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 10px 14px;
-  color: #00e5ff;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.3s ease;
-  border-radius: 8px;
-  user-select: none;
-  background: rgba(18, 24, 38, 0.6);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-}
-
-.prev {
-  left: 0;
-}
-
-.next {
-  right: 0;
-}
-
-.prev:hover, .next:hover {
-  background: rgba(0, 229, 255, 0.2);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
-}
-
-.numbertext {
-  color: #9ca3af;
-  font-size: 11px;
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'FontDialog', sans-serif;
-}
-
-.dots-container {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.dot {
-  cursor: pointer;
-  height: 10px;
-  width: 10px;
-  margin: 0 4px;
-  background-color: rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.4s ease, transform 0.2s ease;
-}
-
-.dot.active, .dot:hover {
-  background-color: #00e5ff;
-  box-shadow: 0 0 8px #00e5ff;
-  transform: scale(1.2);
-}
-
-.fade {
-  animation-name: fade;
-  animation-duration: 0.5s;
-}
-
-@keyframes fade {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
-}
-
-
-
+/* =========================================
+   STILURI PENTRU POZELE DE PE JOS (GALERIA)
+   ========================================= */
 .modul-poza-jos {
   position: absolute;
   border-radius: 8px;
-  overflow: hidden;
-  border: 2px solid rgba(0, 229, 255, 0.7);
+  overflow: hidden; 
+  border: 2px solid rgba(0, 229, 255, 0.4);
   background: rgba(10, 15, 25, 0.9);
   cursor: pointer;
   pointer-events: auto;
-  z-index: 15; /* Puse peste fundal, ușor vizibile */
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 229, 255, 0.3);
+  z-index: 15;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .modul-poza-jos img {
@@ -471,8 +277,8 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  opacity: 0.85;
-  transition: opacity 0.3s ease;
+  filter: brightness(0.5); /* Când nu sunt selectate sunt mai întunecate */
+  transition: filter 0.4s ease;
 }
 
 .tag-modul-jos {
@@ -489,54 +295,79 @@
   white-space: nowrap;
   font-family: 'FontDialog', sans-serif;
   font-weight: bold;
+  z-index: 20;
 }
 
-.modul-stanga-jos {
-  bottom: 3%;
-  left: 10%;
-  width: 120px;
-  height: 85px;
-  transform: rotate(-6deg) rotateX(15deg);
+/* 
+  POZIȚIILE TALE ORIGINALE
+  Aici folosim variabile CSS native pentru a păstra rotația
+  când nu sunt active. 
+*/
+.modul-stanga-jos { 
+  bottom: 3%; left: 10%; width: 120px; height: 85px; 
+  --rotatie-baza: rotate(-6deg) rotateX(15deg);
+  transform: var(--rotatie-baza);
+}
+.modul-centru-jos-1 { 
+  bottom: 4%; left: 28%; width: 115px; height: 80px; 
+  --rotatie-baza: rotate(4deg) rotateX(15deg);
+  transform: var(--rotatie-baza);
+}
+.modul-centru-jos-2 { 
+  bottom: 4%; right: 28%; width: 115px; height: 80px; 
+  --rotatie-baza: rotate(-4deg) rotateX(15deg);
+  transform: var(--rotatie-baza);
 }
 
-.modul-centru-jos-1 {
-  bottom: 4%;
-  left: 28%;
-  width: 115px;
-  height: 80px;
-  transform: rotate(4deg) rotateX(15deg);
-}
-
-.modul-centru-jos-2 {
-  bottom: 4%;
-  right: 28%;
-  width: 115px;
-  height: 80px;
-  transform: rotate(-4deg) rotateX(15deg);
-}
-
-.modul-dreapta-jos {
-  bottom: 3%;
-  right: 10%;
-  width: 120px;
-  height: 85px;
-  transform: rotate(6deg) rotateX(15deg);
-}
-
-.modul-poza-jos:hover,
+/* 
+  --- STAREA CÂND POZA ESTE ACTIVĂ DIN SĂGEȚI --- 
+  Suprascriem TOT transform-ul, eliminând var(--rotatie-baza) și punând scale.
+*/
 .modul-poza-jos.poza-activa {
-  transform: scale(1.3) translateY(-15px) rotate(0deg) !important;
   border-color: #00e5ff;
   box-shadow: 0 0 30px rgba(0, 229, 255, 0.9);
-  z-index: 100; /* Sare peste orice alt element */
+  z-index: 100;
+  /* Asta e magia: Resetăm rotația și o mărim la 1.4, ridicând-o 20px */
+  transform: scale(1.4) translateY(-20px) !important;
 }
 
-.modul-poza-jos:hover img,
-.modul-poza-jos.poza-activa img {
-  opacity: 1;
+.modul-poza-jos.poza-activa img { 
+  filter: brightness(1); /* Poza selectată se luminează complet */
 }
 
- .navigatie-poze-jos {
+
+/* =========================================
+   STILUL PENTRU MASĂ (Modulul 8)
+   ========================================= */
+.modul-stanga-centru-jos {
+  bottom: 25%;
+  left: 18%;
+  width: 110px;
+  height: 78px;
+  z-index: 10;
+  /* Masa are rotația ei fixă */
+  transform: rotate(-3deg) rotateX(12deg) !important; 
+}
+
+/* Masa are imaginea mereu clară (nu e întunecată de regulile generale) */
+.modul-stanga-centru-jos img {
+  filter: brightness(0.9);
+}
+
+.modul-stanga-centru-jos:hover img {
+  filter: brightness(1);
+}
+
+.modul-stanga-centru-jos:hover {
+  border-color: #ff4b4b; 
+  box-shadow: 0 0 20px rgba(255, 75, 75, 0.7);
+  /* Dacă vrei să se mărească puțin și masa la hover, adăugăm scale pe lângă rotație */
+  transform: scale(1.1) rotate(-3deg) rotateX(12deg) !important;
+}
+
+
+/* SĂGEȚILE PENTRU NAVIGARE */
+.navigatie-poze-jos {
   position: absolute;
   bottom: 12%;
   left: 50%;
@@ -561,32 +392,4 @@
 .sageata-poza:hover {
   background: rgba(0, 229, 255, 0.2);
   box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
-}
-
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  
-   background-image: url('/backround.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  padding-bottom: 2rem;
-  overflow: hidden;
-}
-
-
-.modul-stanga-centru-jos {
-  bottom: 25%;
-  left: 18%;
-  width: 110px;
-  height: 78px;
 }
