@@ -26,7 +26,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
     { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
     { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
-    { id: 'm7', clasa: 'modul-dreapta-jos', titlu: 'Modul 7', imagine: '/bun.jpeg' },
+
+    { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: 'masabtn.png'}
   ];
 
   // Schimbă poza selectată (Stânga / Dreapta)
@@ -157,12 +158,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                   }}
                 >
                   <img
-                    src={modul.imagine}
-                    alt={modul.titlu}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
+                  src={modul.imagine}
+                  alt={modul.titlu}
+                  onError={(e) => {
+                    console.error("Nu pot încărca poza:", modul.imagine);
+                    // e.target.style.display = 'none'; <-- Am comentat asta
+                  }}
+                />
                   <div className="tag-modul-jos">{modul.titlu}</div>
                 </div>
               );

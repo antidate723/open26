@@ -582,3 +582,11 @@
   padding-bottom: 2rem;
   overflow: hidden;
 }
+
+
+.modul-stanga-centru-jos {
+  bottom: 12%;
+  left: 18%;
+  width: 110px;
+  height: 78px;
+}
