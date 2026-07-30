@@ -55,19 +55,19 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [activeDialogId, setActiveDialogId] = useState(dialogId);
   const dialogCurent = dateDialoguri.dialoguri[activeDialogId];
 
-  const panouriSus = [
-    { id: 'sus-centru', clasa: 'panou-sus-centru', titlu: 'Modul 1', imagine: '/modul1.png' },
-    { id: 'stanga-sus', clasa: 'panou-stanga-sus', titlu: 'Modul 2', imagine: '/typewriter.png' },
-    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pick-up.png' },
+  const panouriPodea = [
+    { id: 'sus-centru', clasa: 'podea-stanga', titlu: 'Modul 1', imagine: '/chimie.png' },
+    { id: 'stanga-sus', clasa: 'podea-centru', titlu: 'Modul 2', imagine: '/typewriter.png' },
+    { id: 'dreapta-sus', clasa: 'podea-dreapta', titlu: 'Modul 3', imagine: '/sintetizator.png' },
   ];
 
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Circuit 1', imagine: '/bun.jpeg', raspunsCorect: '12' },
-    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Circuit 2', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
-    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Circuit 3', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
+    { id: 'm4', clasa: 'poza-stiva-1', titlu: 'Circuit 1', imagine: '/bun.jpeg', raspunsCorect: '12' },
+    { id: 'm5', clasa: 'poza-stiva-2', titlu: 'Circuit 2', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
+    { id: 'm6', clasa: 'poza-stiva-3', titlu: 'Circuit 3', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
   ];
 
-  const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
+  const modulMasa = { id: 'm8', clasa: 'podea-stanga-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
 
   useEffect(() => {
     if (jocTerminatTimp || moduleRezolvate.length === TOTAL_PUZZLES) return;
@@ -254,11 +254,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
+      {/* Top Left Widgets */}
       <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
-          <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
-        </button>
-
         <div style={{
           background: 'rgba(15, 23, 42, 0.85)',
           border: '1px solid #334155',
@@ -295,48 +292,84 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
           </div>
 
-          <div className="panou-dreapta panou-input-multiplu">
-            <h3>Tablou Siguranțe</h3>
-            <div className="lista-mini-formulare">
-              {moduleJosPoze.map((modul) => {
-                const esteRezolvat = moduleRezolvate.includes(modul.id);
+          {/* Right Panel - Sigurante + Poze Circuite */}
+          <div className="sectiune-dreapta-sigurante">
+            <div className="panou-input-multiplu">
+              <h3>Tablou Siguranțe</h3>
+              <div className="lista-mini-formulare">
+                {moduleJosPoze.map((modul) => {
+                  const esteRezolvat = moduleRezolvate.includes(modul.id);
+                  return (
+                    <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
+                      {esteRezolvat ? (
+                        <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          Conectat <Check size={14} />
+                        </span>
+                      ) : (
+                        <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
+                          <div className="input-grup-orizontal">
+                            <input
+                              type="text"
+                              value={valoriInput[modul.id]}
+                              onChange={(e) => handleInputChange(modul.id, e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              placeholder="ex: 10"
+                              autoComplete="off"
+                            />
+                            <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
+                          </div>
+                          {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
+                        </form>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {moduleRezolvate.length === TOTAL_PUZZLES && (
+                <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
+                </div>
+              )}
+            </div>
+
+            {/* Poze si Sageti Circuite (Mutate in dreapta sub sigurante) */}
+            <div className="zona-circuite-dreapta">
+              {moduleJosPoze.map((modul, idx) => {
+                const esteSelectat = idx === indexModulJos;
+                const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
                 return (
-                  <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
-                    
-                    {esteRezolvat ? (
-                      <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        Conectat <Check size={14} />
-                      </span>
-                    ) : (
-                      <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
-                        <div className="input-grup-orizontal">
-                          <input
-                            type="text"
-                            value={valoriInput[modul.id]}
-                            onChange={(e) => handleInputChange(modul.id, e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                            placeholder="ex: 10"
-                            autoComplete="off"
-                          />
-                          <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
-                        </div>
-                        {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
-                      </form>
-                    )}
+                  <div
+                    key={modul.id}
+                    className={`poza-circuit-stiva ${modul.clasa} ${esteSelectat ? 'poza-circuit-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
+                    onClick={(e) => {
+                      setIndexModulJos(idx);
+                      setCaruselDeschis(true);
+                      handlePanouClick(e, modul.id);
+                    }}
+                  >
+                    <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
+                    <div className="tag-circuit-mic" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      {modul.titlu} {esteDejaRezolvat && <Check size={12} />}
+                    </div>
                   </div>
                 );
               })}
-            </div>
-            {moduleRezolvate.length === TOTAL_PUZZLES && (
-              <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
+              <div className="navigatie-circuite-dreapta" onClick={(e) => e.stopPropagation()}>
+                <button className="sageata-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
+                <button className="sageata-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="container-panouri-central">
-            
-            {panouriSus.map((panou) => {
+          {/* Module Podea + Buton Lumina */}
+          <div className="container-module-podea">
+            {/* Butonul de lumina coborat spre podea in stanga */}
+            <button className="buton-comutator-lumina buton-podea" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Lightbulb size={24} /> 
+              <span>{nivelLumina === 0 ? 'Lumină' : nivelLumina === 1 ? 'Lumină' : nivelLumina === 2 ? 'Lumină' : 'Lumină'}</span>
+            </button>
+
+            {panouriPodea.map((panou) => {
               const esteRezolvatPanou = 
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
                 (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
@@ -345,34 +378,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               return (
                 <div
                   key={panou.id}
-                  className={`modul-poza-jos ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
+                  className={`modul-podea ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
                   onClick={(e) => handlePanouClick(e, panou.id)}
                 >
                   <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
-                  <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                  <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                     {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
-                  </div>
-                </div>
-              );
-            })}
-
-            {moduleJosPoze.map((modul, idx) => {
-              const esteSelectat = idx === indexModulJos;
-              const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
-              
-              return (
-                <div
-                  key={modul.id}
-                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
-                  onClick={(e) => {
-                    setIndexModulJos(idx);
-                    setCaruselDeschis(true);
-                    handlePanouClick(e, modul.id);
-                  }}
-                >
-                  <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
-                  <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    {modul.titlu} {esteDejaRezolvat && <Check size={14} />}
                   </div>
                 </div>
               );
@@ -380,18 +391,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
             <div
               key={modulMasa.id}
-              className={`modul-poza-jos ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
+              className={`modul-podea ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
               onClick={handleMasaClick}
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
-              <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                 {modulMasa.titlu} {moduleRezolvate.includes("m8") && <Check size={14} />}
               </div>
-            </div>
-
-            <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
-              <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
-              <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
             </div>
           </div>
         </div>

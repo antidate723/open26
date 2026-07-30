@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Book, Save } from 'lucide-react';
 import '../components_css/CarnetNotite.css';
 
 export default function CarnetNotite() {
@@ -19,12 +20,14 @@ export default function CarnetNotite() {
         onClick={() => setEsteDeschis(!esteDeschis)}
         title={esteDeschis ? "Închide carnetul" : "Deschide jurnalul de explorator"}
       >
-        {esteDeschis ? '▶' : '📓'}
+        {esteDeschis ? '▶' : <Book size={18} />}
       </button>
 
       <div className="jurnal-continut">
         <div className="jurnal-header">
-          <h3>📜 Jurnal de Explorator</h3>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Book size={20} /> Jurnal de Explorator
+          </h3>
           <span className="jurnal-subtitlu">Notițe & Indicii</span>
         </div>
 
@@ -36,7 +39,9 @@ export default function CarnetNotite() {
         />
 
         <div className="jurnal-footer">
-          <span className="jurnal-status">💾 Salvat local</span>
+          <span className="jurnal-status" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Save size={14} /> Salvat local
+          </span>
           <button 
             className="jurnal-btn-sterge" 
             onClick={() => setNotite('')}
