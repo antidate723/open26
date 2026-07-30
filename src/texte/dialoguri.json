@@ -52,6 +52,13 @@
         "Nu pot ieși așa. Trebuie să creez o reacție chimică puternică.",
         "O mică explozie controlată ar trebui să deschidă calea!"
       ]
+    },
+    "dialog_win_secret": {
+      "titlu": "Sistem de Securitate",
+      "linii": [
+        "Felicitări! Ai ieșit din cameră cu succes!",
+        "O, nu... stai! Ușa nu se deschide, s-a stricat mecanismul! Ai nevoie de o bombă... du-te rapid la laboratorul de chimie!"
+      ]
     }
   }
 }

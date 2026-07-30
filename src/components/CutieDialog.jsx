@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, Check, Zap, Clock } from 'lucide-react';
+import { Lightbulb, Check, Zap, Clock, KeyRound, Trophy } from 'lucide-react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 
@@ -7,28 +7,41 @@ import MathPuzzleModal from './MathPuzzleModal';
 import MusicPuzzleModal from './MusicPuzzleModal';
 import MasinaScrisModal from './MasinaScrisModal';
 import ChemistryPuzzleModal from './ChemistryPuzzleModal';
-import CarnetNotite from './CarnetNotite'; 
+import CarnetNotite from './CarnetNotite';
 
-const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 7; 
+const TOTAL_PUZZLES = 6;
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
+  const [activeDialogId, setActiveDialogId] = useState(dialogId);
   const [indexLinie, setIndexLinie] = useState(0);
   const [textAfisat, setTextAfisat] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  
+
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
   const [indexModulJos, setIndexModulJos] = useState(0);
   const [caruselDeschis, setCaruselDeschis] = useState(false);
-  const [carnetDeschis, setCarnetDeschis] = useState(false); 
 
   const [mathModalOpen, setMathModalOpen] = useState(false);
   const [m8Stage, setM8Stage] = useState(0);
   const [musicModalOpen, setMusicModalOpen] = useState(false);
   const [modul2Open, setModul2Open] = useState(false);
-  const [chemistryModalOpen, setChemistryModalOpen] = useState(false); 
+  const [chemistryModalOpen, setChemistryModalOpen] = useState(false);
+
+  const [ecranFinalComplet, setEcranFinalComplet] = useState(() => {
+    return localStorage.getItem('infoMotion_ecranFinalComplet') === 'true';
+  });
+
+  const [fundalFinal, setFundalFinal] = useState(() => {
+    return localStorage.getItem('infoMotion_fundalCastig') || null;
+  });
+
+  const [codUsa, setCodUsa] = useState('');
+  const [eroareUsa, setEroareUsa] = useState(false);
+  const [usaDeschisa, setUsaDeschisa] = useState(() => {
+    return localStorage.getItem('infoMotion_usaDeschisa') === 'true';
+  });
 
   const [timpScurs, setTimpScurs] = useState(() => {
     const timpSalvat = localStorage.getItem('infoMotion_timpScurs');
@@ -52,11 +65,10 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [valoriInput, setValoriInput] = useState({ m4: '', m5: '', m6: '' });
   const [erori, setErori] = useState({ m4: '', m5: '', m6: '' });
 
-  const [activeDialogId, setActiveDialogId] = useState(dialogId);
-  const dialogCurent = dateDialoguri.dialoguri[activeDialogId];
+  const dialogCurent = dateDialoguri.dialoguri[activeDialogId] || dateDialoguri.dialoguri[dialogId];
 
   const panouriPodea = [
-    { id: 'sus-centru', clasa: 'podea-stanga', titlu: 'Modul 1', imagine: '/chimie.png' },
+    { id: 'sus-centru', clasa: 'podea-stanga', titlu: 'Modul 1 (Chimie)', imagine: '/chimie.png' },
     { id: 'stanga-sus', clasa: 'podea-centru', titlu: 'Modul 2', imagine: '/typewriter.png' },
     { id: 'dreapta-sus', clasa: 'podea-dreapta', titlu: 'Modul 3', imagine: '/sintetizator.png' },
   ];
@@ -68,6 +80,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   ];
 
   const modulMasa = { id: 'm8', clasa: 'podea-stanga-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
+
+  const verificaCodUsa = (e) => {
+    e.preventDefault();
+    const codCorectPredefinit = "123456789";
+    if (codUsa.trim() === codCorectPredefinit) {
+      setUsaDeschisa(true);
+      localStorage.setItem('infoMotion_usaDeschisa', 'true');
+      setEroareUsa(false);
+
+      setNivelLumina(3);
+      localStorage.setItem('infoMotion_nivelLumina', '3');
+
+      const imagineNoua = "/backrounwin.png";
+      setFundalFinal(imagineNoua);
+      localStorage.setItem('infoMotion_fundalCastig', imagineNoua);
+
+      setActiveDialogId("dialog_win_secret");
+      setIndexLinie(0);
+      setDialogTerminat(false);
+    } else {
+      setEroareUsa(true);
+      setTimeout(() => setEroareUsa(false), 1500);
+    }
+  };
 
   useEffect(() => {
     if (jocTerminatTimp || moduleRezolvate.length === TOTAL_PUZZLES) return;
@@ -92,8 +128,10 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   useEffect(() => {
     const rezolvateSursa = JSON.parse(localStorage.getItem('infoMotion_rezolvate') || '[]');
     const deLaSigurante = rezolvateSursa.filter(id => ['m4', 'm5', 'm6'].includes(id)).length;
-    setNivelLumina(deLaSigurante);
-  }, []);
+    if (!usaDeschisa) {
+      setNivelLumina(deLaSigurante);
+    }
+  }, [usaDeschisa]);
 
   useEffect(() => {
     localStorage.setItem('infoMotion_rezolvate', JSON.stringify(moduleRezolvate));
@@ -145,80 +183,22 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
     }, 30);
 
     return () => clearInterval(interval);
-  }, [indexLinie, dialogCurent]);
+  }, [indexLinie, dialogCurent, activeDialogId]);
 
   const actiuneTreciMaiDeparte = () => {
     if (isTyping) return;
-    
+
     if (indexLinie < dialogCurent.linii.length - 1) {
       setIndexLinie((prev) => prev + 1);
     } else {
-      setDialogTerminat(true); 
-      
+      setDialogTerminat(true);
+
       if (activeDialogId === "dialogMasa") {
-        setMathModalOpen(true); 
+        setMathModalOpen(true);
       } else {
-        if (onDialogTerminat) onDialogTerminat(); 
+        if (onDialogTerminat) onDialogTerminat();
       }
     }
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
-      
-      if (caruselDeschis) {
-        if (e.key === 'ArrowLeft') navigaPoze(-1, null);
-        if (e.key === 'ArrowRight') navigaPoze(1, null);
-        if (e.key === 'Escape') setCaruselDeschis(false);
-        return;
-      }
-      if (e.code === 'Space') {
-        e.preventDefault();
-        actiuneTreciMaiDeparte();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTyping, indexLinie, dialogCurent, onDialogTerminat, caruselDeschis]);
-
-  const handleInputChange = (id, valoare) => {
-    setValoriInput(prev => ({ ...prev, [id]: valoare }));
-    if (erori[id]) {
-      setErori(prev => ({ ...prev, [id]: '' }));
-    }
-  };
-
-  const adaugaLaProgresGlobal = (idModul) => {
-    const idUnicGlobal = `${dialogId}-${idModul}`;
-    setModuleGlobalRezolvate((prev) => {
-      if (prev.includes(idUnicGlobal)) return prev;
-      return [...prev, idUnicGlobal];
-    });
-  };
-
-  const verificaRaspunsMultiplu = (e, id, raspunsCorect) => {
-    e.preventDefault();
-    if (valoriInput[id].trim() === raspunsCorect) {
-      if (!moduleRezolvate.includes(id)) {
-        const noiRezolvate = [...moduleRezolvate, id];
-        setModuleRezolvate(noiRezolvate);
-        
-        if (['m4', 'm5', 'm6'].includes(id)) {
-          setNivelLumina(prev => Math.min(prev + 1, 3));
-        }
-
-        adaugaLaProgresGlobal(id);
-      }
-    } else {
-      setErori(prev => ({ ...prev, [id]: 'Incorect' }));
-    }
-  };
-
-  const SchimbaLumina = (e) => {
-    e.stopPropagation();
-    setNivelLumina((prev) => (prev < 3 ? prev + 1 : 0));
   };
 
   const handlePanouClick = (e, panouId) => {
@@ -228,9 +208,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
     } else if (panouId === 'stanga-sus') {
       setModul2Open(true);
     } else if (panouId === 'sus-centru') {
-      setChemistryModalOpen(true); 
-    } else {
-      console.log(`Ai apăsat pe panoul: ${panouId}`);
+      if (!usaDeschisa) {
+        alert("🔒 Acest modul este blocat! Trebuie să introduci mai întâi PIN-ul corect la ușă.");
+        return;
+      }
+      setChemistryModalOpen(true);
     }
   };
 
@@ -243,18 +225,60 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const estePenultimulSauMaiDeparte = activeDialogId !== "intro_camera" || indexLinie >= dialogCurent.linii.length - 2;
   const procentProgres = Math.round((moduleRezolvate.length / TOTAL_PUZZLES) * 100);
 
+  if (ecranFinalComplet) {
+    const sub15Minute = timpScurs <= 900;
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#000000',
+        color: '#ffffff',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 99999,
+        fontFamily: 'monospace',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <Trophy size={64} color="#ffd700" style={{ marginBottom: '20px' }} />
+        <h1 style={{ fontSize: '2.5rem', color: '#4ade80', marginBottom: '10px' }}>FELICITĂRI!</h1>
+        <p style={{ fontSize: '1.2rem', color: '#cbd5e1', maxWidth: '600px', lineHeight: '1.6', marginBottom: '20px' }}>
+          Ai reușit să finalizezi toate modulele, inclusiv experimentul final de chimie și să ieși din escape room!
+        </p>
+        <div style={{
+          background: 'rgba(30, 41, 59, 0.7)',
+          border: '1px solid #475569',
+          padding: '15px 30px',
+          borderRadius: '10px',
+          fontSize: '1.5rem',
+          marginBottom: '30px',
+          color: '#38bdf8'
+        }}>
+          ⏱️ Timp total: <strong>{formateazaTimp(timpScurs)}</strong>
+        </div>
+        <p style={{ fontSize: '1.1rem', color: sub15Minute ? '#4ade80' : '#f87171', fontWeight: 'bold' }}>
+          {sub15Minute ? "🏆 Ai reușit să ieși SUB 15 minute!" : "⏰ Ai depășit 15 minute, dar important este că ai reușit!"}
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="dialog-overlay">
+    <div className={`dialog-overlay ${fundalFinal ? 'castigat' : ''}`}>
       <div className="licurici-container">
         {[...Array(20)].map((_, i) => (
           <div key={i} className="licurici"></div>
         ))}
       </div>
-      
+
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
-      <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
-      
-      
+      {!usaDeschisa && <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>}
+
       <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
         <div style={{
           background: 'rgba(15, 23, 42, 0.85)',
@@ -276,7 +300,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
-          
+
+          <div className="infomotion-cifru-usa-container">
+            <div className="infomotion-cifru-titlu">
+              <KeyRound size={12} /> Cifru Ușă
+            </div>
+            {usaDeschisa ? (
+              <span className="infomotion-cifru-succes">DEBLOCAT ✓</span>
+            ) : (
+              <form onSubmit={verificaCodUsa} onClick={(e) => e.stopPropagation()} className="infomotion-cifru-form">
+                <input
+                  type="password"
+                  value={codUsa}
+                  onChange={(e) => setCodUsa(e.target.value)}
+                  placeholder="PIN..."
+                  className={`infomotion-cifru-input ${eroareUsa ? 'eroare' : ''}`}
+                  autoComplete="off"
+                />
+                <button type="submit" className="infomotion-cifru-btn">
+                  OK
+                </button>
+              </form>
+            )}
+          </div>
+
           <div className="container-progres-global">
             <div className="info-progres-text">
               <span>Progres Escape Room: {moduleRezolvate.length} / {TOTAL_PUZZLES} Module</span>
@@ -292,95 +339,83 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
           </div>
 
-          
-          <div className="sectiune-dreapta-sigurante">
-            <div className="panou-input-multiplu">
-              <h3>Tablou Siguranțe</h3>
-              <div className="lista-mini-formulare">
-                {moduleJosPoze.map((modul) => {
-                  const esteRezolvat = moduleRezolvate.includes(modul.id);
-                  return (
-                    <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
-                      {esteRezolvat ? (
-                        <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          Conectat <Check size={14} />
-                        </span>
-                      ) : (
-                        <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
-                          <div className="input-grup-orizontal">
-                            <input
-                              type="text"
-                              value={valoriInput[modul.id]}
-                              onChange={(e) => handleInputChange(modul.id, e.target.value)}
-                              onClick={(e) => e.stopPropagation()}
-                              placeholder="ex: 10"
-                              autoComplete="off"
-                            />
-                            <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
-                          </div>
-                          {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
-                        </form>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {moduleRezolvate.length === TOTAL_PUZZLES && (
-                <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                  Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
-                </div>
-              )}
-            </div>
-
-            
-            <div className="zona-circuite-dreapta">
-              {moduleJosPoze.map((modul, idx) => {
-                const esteSelectat = idx === indexModulJos;
-                const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
-                return (
-                  <div
-                    key={modul.id}
-                    className={`poza-circuit-stiva ${modul.clasa} ${esteSelectat ? 'poza-circuit-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
-                    onClick={(e) => {
-                      setIndexModulJos(idx);
-                      setCaruselDeschis(true);
-                      handlePanouClick(e, modul.id);
+          <div className="sectiune-dreapta-sigurante" style={{ zIndex: 50, position: 'relative' }}>
+            <div style={{ color: '#cbd5e1', fontSize: '0.85rem', marginBottom: '6px', fontWeight: 'bold', textAlign: 'center' }}>Tablou Siguranțe</div>
+            {moduleJosPoze.map((modul) => {
+              const esteRezolvat = moduleRezolvate.includes(modul.id);
+              return (
+                <div key={modul.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder="Răspuns..."
+                    value={valoriInput[modul.id]}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setValoriInput(prev => ({ ...prev, [modul.id]: val }));
+                    }}
+                    style={{
+                      background: '#1e293b',
+                      border: '1px solid #475569',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      width: '70px',
+                      fontSize: '0.8rem'
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (valoriInput[modul.id].trim() === modul.raspunsCorect) {
+                        if (!moduleRezolvate.includes(modul.id)) {
+                          const noiRez = [...moduleRezolvate, modul.id];
+                          setModuleRezolvate(noiRez);
+                          adaugaLaProgresGlobal(modul.id);
+                        }
+                        alert("Corect! Siguranță activată.");
+                      } else {
+                        alert("Greșit!");
+                      }
+                    }}
+                    style={{
+                      background: esteRezolvat ? '#22c55e' : '#3b82f6',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
                     }}
                   >
-                    <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
-                    <div className="tag-circuit-mic" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                      {modul.titlu} {esteDejaRezolvat && <Check size={12} />}
-                    </div>
-                  </div>
-                );
-              })}
-              <div className="navigatie-circuite-dreapta" onClick={(e) => e.stopPropagation()}>
-                <button className="sageata-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
-                <button className="sageata-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
-              </div>
-            </div>
+                    {esteRezolvat ? '✓' : 'OK'}
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
-          
           <div className="container-module-podea">
-           
-          
+            <button className="buton-comutator-lumina buton-podea" onClick={(e) => { e.stopPropagation(); if (!usaDeschisa) setNivelLumina(prev => (prev < 3 ? prev + 1 : 0)); }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Lightbulb size={24} />
+              <span>Lumină</span>
+            </button>
 
             {panouriPodea.map((panou) => {
-              const esteRezolvatPanou = 
+              const esteRezolvatPanou =
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
                 (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
-                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1')); 
-                
+                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1'));
+
               return (
                 <div
                   key={panou.id}
                   className={`modul-podea ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
                   onClick={(e) => handlePanouClick(e, panou.id)}
+                  style={{ opacity: (panou.id === 'sus-centru' && !usaDeschisa) ? 0.6 : 1 }}
                 >
                   <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
                   <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                     {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
+                    {panou.id === 'sus-centru' && !usaDeschisa && " 🔒"}
                   </div>
                 </div>
               );
@@ -400,9 +435,48 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         </div>
       )}
 
-      {!dialogTerminat && (
-        <div 
-          className="dialog-box" 
+      {moduleRezolvate.length === TOTAL_PUZZLES && (
+        <div style={{
+          position: 'fixed',
+          bottom: '30px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 99999,
+          background: 'rgba(15, 23, 42, 0.95)',
+          border: '2px solid #4ade80',
+          padding: '15px 30px',
+          borderRadius: '12px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <span style={{ color: '#4ade80', fontWeight: 'bold', fontSize: '1rem' }}>🎉 Toate modulele și ușa sunt complet gata!</span>
+          <button
+            onClick={() => {
+              setEcranFinalComplet(true);
+              localStorage.setItem('infoMotion_ecranFinalComplet', 'true');
+            }}
+            style={{
+              background: '#22c55e',
+              color: '#fff',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            Vezi Ecranul de Final & Timpul
+          </button>
+        </div>
+      )}
+
+      {(!dialogTerminat || activeDialogId === "dialog_win_secret") && (
+        <div
+          className="dialog-box"
           onClick={actiuneTreciMaiDeparte}
           style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
@@ -418,7 +492,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       )}
 
       <CarnetNotite />
-
       {caruselDeschis && (
         <div className="galerie-fullscreen" onClick={() => setCaruselDeschis(false)}>
           <button className="buton-inchidere-galerie" onClick={(e) => { e.stopPropagation(); setCaruselDeschis(false); }}>×</button>
@@ -427,16 +500,35 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
           <button className="sageata-galerie dreapta" onClick={(e) => navigaPoze(1, e)}>❯</button>
         </div>
       )}
+      {chemistryModalOpen && (
+        <ChemistryPuzzleModal
+          onClose={() => setChemistryModalOpen(false)}
+          onSolved={() => {
+            if (!moduleRezolvate.includes("m1")) {
+              const noiRezolvate = [...moduleRezolvate, "m1"];
+              setModuleRezolvate(noiRezolvate);
+              adaugaLaProgresGlobal("m1");
+              localStorage.setItem('infoMotion_notaChimie', 'Reacție chimică H2SO4 finalizată');
+
+              const imagineFinalaNoua = "/backrounwin.png";
+              setFundalFinal(imagineFinalaNoua);
+              localStorage.setItem('infoMotion_fundalCastig', imagineFinalaNoua);
+            }
+            setChemistryModalOpen(false);
+          }}
+        />
+      )}
+
 
       {mathModalOpen && (
         <MathPuzzleModal
           stage={m8Stage}
-          isAlreadySolved={moduleRezolvate.includes("m8")} 
+          isAlreadySolved={moduleRezolvate.includes("m8")}
           onClose={() => setMathModalOpen(false)}
           onSolvedStage={() => {
             const next = m8Stage + 1;
             setM8Stage(next);
-            
+
             if (next >= 3 && !moduleRezolvate.includes("m8")) {
               const noiRezolvate = [...moduleRezolvate, "m8"];
               setModuleRezolvate(noiRezolvate);
@@ -454,6 +546,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               const noiRezolvate = [...moduleRezolvate, "m3"];
               setModuleRezolvate(noiRezolvate);
               adaugaLaProgresGlobal("m3");
+              localStorage.setItem('infoMotion_notaMuzica', 'Secvența corectă sintetizator activată');
             }
             setMusicModalOpen(false);
           }}
@@ -469,25 +562,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               const noiRezolvate = [...moduleRezolvate, "m2"];
               setModuleRezolvate(noiRezolvate);
               adaugaLaProgresGlobal("m2");
+              localStorage.setItem('infoMotion_notaMasina', 'Cod mașină de scris validat');
             }
             setModul2Open(false);
           }}
         />
       )}
 
-      {chemistryModalOpen && (
-        <ChemistryPuzzleModal
-          onClose={() => setChemistryModalOpen(false)}
-          onSolved={() => {
-            if (!moduleRezolvate.includes("m1")) {
-              const noiRezolvate = [...moduleRezolvate, "m1"];
-              setModuleRezolvate(noiRezolvate);
-              adaugaLaProgresGlobal("m1");
-            }
-            setChemistryModalOpen(false);
-          }}
-        />
-      )}
 
     </div>
   );
