@@ -6,10 +6,11 @@ import '../components_css/CutieDialog.css';
 import MathPuzzleModal from './MathPuzzleModal';
 import MusicPuzzleModal from './MusicPuzzleModal';
 import MasinaScrisModal from './MasinaScrisModal';
+import ChemistryPuzzleModal from './ChemistryPuzzleModal';
 import CarnetNotite from './CarnetNotite'; 
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 5; 
+const TOTAL_PUZZLES = 7; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -27,6 +28,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [m8Stage, setM8Stage] = useState(0);
   const [musicModalOpen, setMusicModalOpen] = useState(false);
   const [modul2Open, setModul2Open] = useState(false);
+  const [chemistryModalOpen, setChemistryModalOpen] = useState(false); 
 
   const [moduleRezolvate, setModuleRezolvate] = useState(() => {
     const salvat = localStorage.getItem('infoMotion_rezolvate');
@@ -192,6 +194,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       setMusicModalOpen(true);
     } else if (panouId === 'stanga-sus') {
       setModul2Open(true);
+    } else if (panouId === 'sus-centru') {
+      setChemistryModalOpen(true); 
     } else {
       console.log(`Ai apăsat pe panoul: ${panouId}`);
     }
@@ -278,7 +282,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               const esteRezolvatPanou = 
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
                 (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
-                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1'));
+                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1')); 
                 
               return (
                 <div
@@ -406,6 +410,20 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               adaugaLaProgresGlobal("m2");
             }
             setModul2Open(false);
+          }}
+        />
+      )}
+
+      {chemistryModalOpen && (
+        <ChemistryPuzzleModal
+          onClose={() => setChemistryModalOpen(false)}
+          onSolved={() => {
+            if (!moduleRezolvate.includes("m1")) {
+              const noiRezolvate = [...moduleRezolvate, "m1"];
+              setModuleRezolvate(noiRezolvate);
+              adaugaLaProgresGlobal("m1");
+            }
+            setChemistryModalOpen(false);
           }}
         />
       )}

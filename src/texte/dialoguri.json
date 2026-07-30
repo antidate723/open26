@@ -18,13 +18,14 @@
         "Am I supposed to do something with them? Maybe if I mix them..."
       ]
     },
-     "masina_scris": {
-      "id":  "masina_scris",
+    "masina_scris": {
+      "id": "masina_scris",
       "titlu": "Dean",
       "linii": [
         "A typewriter? No, it looks like an old terminal.",
         "The screen is blinking... it needs some kind of text formatting to process the command.",
-        "Let's see if I remember how to write this syntax." ]
+        "Let's see if I remember how to write this syntax."
+      ]
     },
     "masa_mate": {
       "id": "masa_mate",
@@ -42,6 +43,14 @@
         "O frecvență ciudată începe să pulseze în pereți...",
         "Aflu un ritm ascuns în ecourile încăperii.",
         "Trebuie să potrivesc semnalele audio în ordinea corectă!"
+      ]
+    },
+    "modul_chimie": {
+      "titlu": "Laborator de Chimie",
+      "linii": [
+        "Am terminat primele 3 task-uri, dar ușa principală este blocată ermetic...",
+        "Nu pot ieși așa. Trebuie să creez o reacție chimică puternică.",
+        "O mică explozie controlată ar trebui să deschidă calea!"
       ]
     }
   }
