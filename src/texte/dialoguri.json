@@ -47,10 +47,10 @@
       ]
     },
     "dialog_win_secret": {
-      "titlu": "Sistem de Securitate",
+      "titlu": "Security System",
       "linii": [
-        "Felicitări! Ai ieșit din cameră cu succes!",
-        "O, nu... stai! Ușa nu se deschide, s-a stricat mecanismul! Ai nevoie de o bombă... du-te rapid la laboratorul de chimie!"
+        "Congratulations! You escaped the room successfully!",
+        "Oh no... wait! The door won't open, the mechanism is broken! You need a bomb... hurry to the chemistry lab!"
       ]
     }
     
