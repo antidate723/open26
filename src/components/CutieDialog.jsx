@@ -10,7 +10,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
   
-  // Indexul care controlează STRICT caruselul (primele 3 poze)
+  // Indexul pozei selectate din "galeria" de jos
   const [indexModulJos, setIndexModulJos] = useState(0);
 
   const dialogCurent = dateDialoguri.dialoguri[dialogId];
@@ -22,14 +22,14 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
   ];
 
-  // Acestea 3 sunt legate de săgeți (Carusel)
+  // Galeria ta de jos (pozele care se plimbă cu săgețile)
   const moduleJosPoze = [
     { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
     { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
     { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
   ];
 
-  // Asta e doar o poză statică pe care poți da click (NU face parte din săgeți)
+  // Masa - obiect separat
   const modulMasa = { 
     id: 'm8', 
     clasa: 'modul-stanga-centru-jos', 
@@ -37,15 +37,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     imagine: '/masabtn.png' 
   };
 
-  // Navigarea se face STRICT pe array-ul moduleJosPoze
+  // Logica pentru săgeți: se aplică doar pe "moduleJosPoze"
   const navigaPoze = (directie, e) => {
     e.stopPropagation();
     setIndexModulJos((prev) => {
       let urmatorul = prev + directie;
-      
       if (urmatorul >= moduleJosPoze.length) return 0;
       if (urmatorul < 0) return moduleJosPoze.length - 1;
-      
       return urmatorul;
     });
   };
@@ -159,7 +157,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </button>
             ))}
 
-            {/* 2. POZELE DIN CARUSEL (Doar 4, 5 și 6 sunt afectate de săgeți) */}
+            {/* 2. POZELE "GALERIE" (Modulele 4, 5, 6 - controlate de săgeți) */}
             {moduleJosPoze.map((modul, idx) => {
               const esteSelectat = idx === indexModulJos;
               return (
@@ -181,7 +179,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               );
             })}
 
-            {/* 3. MASA (Statică, independentă de săgeți) */}
+            {/* 3. MASA (Statică, independentă de săgeți, mereu pe ecran) */}
             <div
               key={modulMasa.id}
               className={`modul-poza-jos ${modulMasa.clasa}`}
@@ -195,7 +193,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               <div className="tag-modul-jos">{modulMasa.titlu}</div>
             </div>
 
-            {/* 4. SĂGEȚILE */}
+            {/* 4. SĂGEȚILE PENTRU GALERIE (Se aplică doar pozelor 4, 5, 6) */}
             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
               <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
               <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
