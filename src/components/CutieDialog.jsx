@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 import MathPuzzleModal from './MathPuzzleModal';
-import CarnetNotite from './CarnetNotite'; // Import adăugat din codul tău nou
+import CarnetNotite from './CarnetNotite'; 
+import MasinaScrisModal from './MasinaScrisModal';
+
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 4; // Am adăugat masa (m8) la total!
+const TOTAL_PUZZLES = 5; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -17,11 +19,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [dialogTerminat, setDialogTerminat] = useState(false);
   const [indexModulJos, setIndexModulJos] = useState(0);
   const [caruselDeschis, setCaruselDeschis] = useState(false);
-  const [carnetDeschis, setCarnetDeschis] = useState(false); // Stare adăugată din codul tău nou
+  const [carnetDeschis, setCarnetDeschis] = useState(false); 
 
-  // Stări noi pentru modalul de matematică
+
   const [mathModalOpen, setMathModalOpen] = useState(false);
   const [m8Stage, setM8Stage] = useState(0);
+  const [modul2Open, setModul2Open] = useState(false);
 
   const [moduleRezolvate, setModuleRezolvate] = useState(() => {
     const salvat = localStorage.getItem('infoMotion_rezolvate');
@@ -176,9 +179,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   };
 
   const handlePanouClick = (e, panouId) => {
-    e.stopPropagation();
+  e.stopPropagation();
+  if (panouId === 'stanga-sus') {
+    setModul2Open(true);
+  } else {
     console.log(`Ai apăsat pe panoul: ${panouId}`);
-  };
+  }
+};
 
   const handleMasaClick = (e) => {
     e.stopPropagation();
@@ -354,6 +361,25 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
           }}
         />
       )}
+
+
+      {modul2Open && (
+  <MasinaScrisModal
+    isAlreadySolved={moduleRezolvate.includes("m2")}
+    onClose={() => setModul2Open(false)}
+    onSolved={() => {
+      if (!moduleRezolvate.includes("m2")) {
+        const noiRezolvate = [...moduleRezolvate, "m2"];
+        setModuleRezolvate(noiRezolvate);
+        setNivelLumina(noiRezolvate.length);
+        adaugaLaProgresGlobal("m2");
+      }
+      setModul2Open(false); // Oprim modalul după succes
+    }}
+  />
+)}
+
+
     </div>
   );
 }

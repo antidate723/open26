@@ -18,13 +18,13 @@
         "Am I supposed to do something with them? Maybe if I mix them..."
       ]
     },
-    "obiect_calculator": {
-      "id": "obiect_calculator",
+     "masina_scris": {
+      "id":  "masina_scris",
       "titlu": "Dean",
       "linii": [
-        "The screen is covered in dust, but it still works.",
-        "It's asking for some kind of special formatting to run the program."
-      ]
+        "A typewriter? No, it looks like an old terminal.",
+        "The screen is blinking... it needs some kind of text formatting to process the command.",
+        "Let's see if I remember how to write this syntax." ]
     },
     "masa_mate":{
       "id" : "masa_mate",
