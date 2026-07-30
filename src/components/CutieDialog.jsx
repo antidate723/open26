@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 import MathPuzzleModal from './MathPuzzleModal';
-import CarnetNotite from './CarnetNotite'; // Import adăugat din codul tău nou
+import MusicPuzzleModal from './MusicPuzzleModal';
+import CarnetNotite from './CarnetNotite'; 
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 4; // Am adăugat masa (m8) la total!
+const TOTAL_PUZZLES = 4; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -17,11 +18,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [dialogTerminat, setDialogTerminat] = useState(false);
   const [indexModulJos, setIndexModulJos] = useState(0);
   const [caruselDeschis, setCaruselDeschis] = useState(false);
-  const [carnetDeschis, setCarnetDeschis] = useState(false); // Stare adăugată din codul tău nou
+  const [carnetDeschis, setCarnetDeschis] = useState(false); 
 
-  // Stări noi pentru modalul de matematică
   const [mathModalOpen, setMathModalOpen] = useState(false);
   const [m8Stage, setM8Stage] = useState(0);
+  const [musicModalOpen, setMusicModalOpen] = useState(false);
 
   const [moduleRezolvate, setModuleRezolvate] = useState(() => {
     const salvat = localStorage.getItem('infoMotion_rezolvate');
@@ -53,8 +54,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
 
+  // Calculăm lumina inițială bazată strict pe modulele de la siguranțe (m4, m5, m6)
   useEffect(() => {
-    setNivelLumina(moduleRezolvate.length);
+    const rezolvateSursa = JSON.parse(localStorage.getItem('infoMotion_rezolvate') || '[]');
+    const deLaSigurante = rezolvateSursa.filter(id => ['m4', 'm5', 'm6'].includes(id)).length;
+    setNivelLumina(deLaSigurante);
   }, []);
 
   useEffect(() => {
@@ -123,7 +127,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; // Updatat cu TEXTAREA din codul tău nou
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
       
       if (caruselDeschis) {
         if (e.key === 'ArrowLeft') navigaPoze(-1, null);
@@ -162,7 +166,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       if (!moduleRezolvate.includes(id)) {
         const noiRezolvate = [...moduleRezolvate, id];
         setModuleRezolvate(noiRezolvate);
-        setNivelLumina(noiRezolvate.length);
+        
+        // Lumina se modifică DOAR pentru modulele de la siguranțe (m4, m5, m6)
+        if (['m4', 'm5', 'm6'].includes(id)) {
+          setNivelLumina(prev => Math.min(prev + 1, 3));
+        }
+
         adaugaLaProgresGlobal(id);
       }
     } else {
@@ -177,7 +186,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   const handlePanouClick = (e, panouId) => {
     e.stopPropagation();
-    console.log(`Ai apăsat pe panoul: ${panouId}`);
+    if (panouId === 'dreapta-sus') {
+      setMusicModalOpen(true);
+    } else {
+      console.log(`Ai apăsat pe panoul: ${panouId}`);
+    }
   };
 
   const handleMasaClick = (e) => {
@@ -256,15 +269,18 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
           </div>
 
           <div className="container-panouri-central">
-            {panouriSus.map((panou) => (
-              <button
-                key={panou.id}
-                className={`panou-card ${panou.clasa}`}
-                onClick={(e) => handlePanouClick(e, panou.id)}
-              >
-                <span>{panou.text}</span>
-              </button>
-            ))}
+            {panouriSus.map((panou) => {
+              const esteRezolvatM3 = panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3');
+              return (
+                <button
+                  key={panou.id}
+                  className={`panou-card ${panou.clasa} ${esteRezolvatM3 ? 'modul-verde' : ''}`}
+                  onClick={(e) => handlePanouClick(e, panou.id)}
+                >
+                  <span>{panou.text} {esteRezolvatM3 ? '✅' : ''}</span>
+                </button>
+              );
+            })}
 
             {moduleJosPoze.map((modul, idx) => {
               const esteSelectat = idx === indexModulJos;
@@ -288,14 +304,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               );
             })}
 
-            {/* MODULUL 8 - MASA (pe podea) - Funcționalitatea adăugată aici */}
             <div
               key={modulMasa.id}
               className={`modul-poza-jos ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
               onClick={handleMasaClick}
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
-              <div className="tag-modul-jos">{modulMasa.titlu}</div>
+              <div className="tag-modul-jos">{modulMasa.titlu} {moduleRezolvate.includes("m8") ? '✅' : ''}</div>
             </div>
 
             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
@@ -323,7 +338,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         </div>
       )}
 
-      {/* Carnetul tău adăugat */}
       <CarnetNotite />
 
       {caruselDeschis && (
@@ -335,7 +349,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         </div>
       )}
 
-      {/* RENDERIZARE MODAL MATEMATICĂ */}
       {mathModalOpen && (
         <MathPuzzleModal
           stage={m8Stage}
@@ -348,9 +361,22 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             if (next >= 3 && !moduleRezolvate.includes("m8")) {
               const noiRezolvate = [...moduleRezolvate, "m8"];
               setModuleRezolvate(noiRezolvate);
-              setNivelLumina(noiRezolvate.length);
               adaugaLaProgresGlobal("m8");
             }
+          }}
+        />
+      )}
+
+      {musicModalOpen && (
+        <MusicPuzzleModal
+          onClose={() => setMusicModalOpen(false)}
+          onSolved={() => {
+            if (!moduleRezolvate.includes("m3")) {
+              const noiRezolvate = [...moduleRezolvate, "m3"];
+              setModuleRezolvate(noiRezolvate);
+              adaugaLaProgresGlobal("m3");
+            }
+            setMusicModalOpen(false);
           }}
         />
       )}
