@@ -75,3 +75,7 @@ Fisierele vor fi generate în folderul `dist/`.
 
 **11AS28**
 - GitHub: [@11AS28](https://github.com/11AS28)
+
+
+**Credite**
+Melodiile sunt loate dintr un joc video "please dont touch anything" 
