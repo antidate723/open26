@@ -1,7 +1,7 @@
 .camera-container {
   height: 100vh;
   width: 100%;
-  background-color: #000000; /* Un gri/albastru închis ca fundal de cameră */
+  background-color: #000000; 
   position: relative;
   overflow: hidden;
 }
@@ -17,7 +17,7 @@
   text-align: center;
 }
 
-/* Stil general pentru obiectele pe care poți da click */
+
 .obiect-interactiv {
   position: absolute;
   padding: 30px;
@@ -35,18 +35,18 @@
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
 
-/* Poziționare specifică pt Masa de Chimie */
+
 .chimie {
-  background-color: #7e22ce; /* Mov */
+  background-color: #7e22ce; 
   bottom: 20%;
   left: 20%;
   width: 150px;
   height: 100px;
 }
 
-/* Poziționare specifică pt Calculator */
+
 .calculator {
-  background-color: #475569; /* Gri */
+  background-color: #475569; 
   top: 30%;
   right: 25%;
   width: 120px;

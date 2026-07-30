@@ -254,7 +254,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
-      {/* Top Left Widgets */}
+      
       <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
         <div style={{
           background: 'rgba(15, 23, 42, 0.85)',
@@ -292,7 +292,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
           </div>
 
-          {/* Right Panel - Sigurante + Poze Circuite */}
+          
           <div className="sectiune-dreapta-sigurante">
             <div className="panou-input-multiplu">
               <h3>Tablou Siguranțe</h3>
@@ -332,7 +332,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               )}
             </div>
 
-            {/* Poze si Sageti Circuite (Mutate in dreapta sub sigurante) */}
+            
             <div className="zona-circuite-dreapta">
               {moduleJosPoze.map((modul, idx) => {
                 const esteSelectat = idx === indexModulJos;
@@ -361,13 +361,10 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             </div>
           </div>
 
-          {/* Module Podea + Buton Lumina */}
+          
           <div className="container-module-podea">
-            {/* Butonul de lumina coborat spre podea in stanga */}
-            <button className="buton-comutator-lumina buton-podea" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Lightbulb size={24} /> 
-              <span>{nivelLumina === 0 ? 'Lumină' : nivelLumina === 1 ? 'Lumină' : nivelLumina === 2 ? 'Lumină' : 'Lumină'}</span>
-            </button>
+           
+          
 
             {panouriPodea.map((panou) => {
               const esteRezolvatPanou = 

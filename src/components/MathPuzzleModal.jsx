@@ -10,14 +10,14 @@ const puzzles = [
 ];
 
 export default function MathPuzzleModal({ stage, onClose, onSolvedStage, isAlreadySolved }) {
-  // Dacă a mai fost deschis (stage > 0) sau e rezolvat, dăm skip la poveste
- const [mode, setMode] = useState('dialog'); // Așa forțăm dialogul să apară mereu!
   
-  // Stări pentru problema de matematică
+ const [mode, setMode] = useState('dialog'); 
+  
+  
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
-  // ====== LOGICA DE DIALOG ======
+  
   const liniiDialog = dateDialoguri.dialoguri["masa_mate"].linii;
   const titluDialog = dateDialoguri.dialoguri["masa_mate"].titlu;
   
@@ -48,16 +48,16 @@ export default function MathPuzzleModal({ stage, onClose, onSolvedStage, isAlrea
 
   const actiuneDialog = (e) => {
     e.stopPropagation();
-    if (isTyping) return; // Așteptăm să termine de scris
+    if (isTyping) return; 
     
     if (indexLinie < liniiDialog.length - 1) {
       setIndexLinie(prev => prev + 1);
     } else {
-      setMode('puzzle'); // A terminat textul, deschidem foaia de mate!
+      setMode('puzzle'); 
     }
   };
 
-  // ====== LOGICA PENTRU MATEMATICĂ ======
+  
   const isCompleted = stage >= 3;
   const current = !isCompleted ? puzzles[stage] : null;
 
@@ -75,11 +75,11 @@ export default function MathPuzzleModal({ stage, onClose, onSolvedStage, isAlrea
   return (
     <div 
       className="math-modal-overlay" 
-      onClick={mode === 'puzzle' ? onClose : undefined} // Se poate închide dând click în afară doar la puzzle
+      onClick={mode === 'puzzle' ? onClose : undefined} 
     >
       {mode === 'dialog' ? (
         
-        /* ECRANUL DE DIALOG (Folosim aceleași clase din CutieDialog.css!) */
+        
         <div 
           className="dialog-box" 
           onClick={actiuneDialog}
@@ -97,7 +97,7 @@ export default function MathPuzzleModal({ stage, onClose, onSolvedStage, isAlrea
 
       ) : (
 
-        /* ECRANUL CU FOAIA DE MATE */
+        
         <div className="math-modal-box" onClick={(e) => e.stopPropagation()}>
           <button className="math-close-btn" onClick={onClose}>×</button>
           <h2 className="math-title">Foaie cu Problemă</h2>

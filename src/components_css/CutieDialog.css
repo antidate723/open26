@@ -297,9 +297,7 @@
   transition: width 0.4s ease-in-out;
 }
 
-/* =========================================================
-   SECTIUNE DREAPTA: Sigurante + Poze Circuite
-   ========================================================= */
+
 
 .sectiune-dreapta-sigurante {
   position: absolute;
@@ -382,7 +380,7 @@
 .eroare-text-mic { color: #ff4d4d; font-size: 0.75rem; display: block; margin-top: 4px; }
 .status-verde-mic { color: #4dff4d; font-size: 0.85rem; font-weight: bold; }
 
-/* Fără fundal pentru textul de succes */
+
 .status-final-curent { 
   margin-top: 15px; 
   text-align: center; 
@@ -392,7 +390,7 @@
   background: transparent; 
 }
 
-/* Zona poze circuite asezate sub sigurante */
+
 .zona-circuite-dreapta {
   position: relative;
   height: 140px;
@@ -400,7 +398,7 @@
   perspective: 1000px;
 }
 
-/* Fără bg, fără shadow, mai mari (160px) */
+
 .poza-circuit-stiva {
   position: absolute;
   width: 160px;
@@ -413,7 +411,7 @@
   box-shadow: none;
 }
 
-/* Fără rotate la circuite */
+
 .poza-stiva-1 { top: 0; left: 0px; z-index: 1; }
 .poza-stiva-2 { top: 15px; left: 15px; z-index: 2; }
 .poza-stiva-3 { top: 30px; left: 10px; z-index: 3; }
@@ -473,11 +471,7 @@
 
 .sageata-poza:hover { background: rgba(0, 229, 255, 0.2); }
 
-/* =========================================================
-   SECTIUNE PODEA: Celelalte module asezate jos
-   ========================================================= */
 
-/* Container marit la 100% pentru a avea loc în dreapta */
 .container-module-podea {
   position: absolute;
   bottom: 0;
@@ -488,7 +482,7 @@
   perspective: 1200px;
 }
 
-/* Fără bg și shadow */
+
 .modul-podea {
   position: absolute;
   border-radius: 8px;
@@ -524,7 +518,7 @@
   white-space: nowrap;
 }
 
-/* Distribuire asimetrica pe podea FARA rotatii, dimensiuni marite si mutate mai in dreapta */
+
 .podea-stanga {
   bottom: 25%;
   left: 15%;
@@ -541,7 +535,7 @@
   aspect-ratio: 4/3;
 }
 
-/* Modulul 3 mult mai in dreapta (left 65%) si marit */
+
 .podea-dreapta {
   bottom: 30%;
   left: 65%;
@@ -550,7 +544,6 @@
   aspect-ratio: 4/3;
 }
 
-/* Modulul 8 si mai in dreapta (left 78%) si marit */
 .podea-stanga-jos {
   bottom: 5%;
   left: 78%;
@@ -559,7 +552,7 @@
   aspect-ratio: 4/3;
 }
 
-/* Galerie Fullscreen */
+
 .galerie-fullscreen {
   position: fixed;
   top: 0;

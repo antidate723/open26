@@ -6,7 +6,7 @@ import dateDialoguri from '../texte/dialoguri.json';
 export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved }) {
   const [mode, setMode] = useState(isAlreadySolved ? 'puzzle' : 'dialog');
 
-  // ====== LOGICA DE DIALOG ======
+ 
   const liniiDialog = dateDialoguri.dialoguri["masina_scris"].linii;
   const titluDialog = dateDialoguri.dialoguri["masina_scris"].titlu;
   
@@ -46,7 +46,7 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
     }
   };
 
-  // ====== LOGICA PUZZLE (Mașină de scris) ======
+
   const [culoare, setCuloare] = useState('black');
   const [aliniere, setAliniere] = useState('left');
   const [marime, setMarime] = useState('16px');
@@ -54,14 +54,14 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
 
   const verificaFormatare = () => {
     if (culoare === 'red' && aliniere === 'center' && marime === '24px') {
-      setFeedback('✅ FORMAT ACCEPTED. PRINTING CLASSIFIED LOG...');
+      setFeedback(' FORMAT ACCEPTED. PRINTING CLASSIFIED LOG...');
       
       setTimeout(() => {
         onSolved();
       }, 1500); 
       
     } else {
-      setFeedback('❌ ERROR: MACHINE REJECTS FORMATTING. TRY AGAIN.');
+      setFeedback(' ERROR: MACHINE REJECTS FORMATTING. TRY AGAIN.');
     }
   };
 
@@ -80,9 +80,7 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
           </div>
         </div>
       ) : (
-        /* ========================================= */
-        /* CONTAINERUL TYPEWRITER                    */
-        /* ========================================= */
+        
         <div className="typewriter-container" onClick={(e) => e.stopPropagation()}>
           <button className="typewriter-close-btn" onClick={onClose}>×</button>
           
@@ -99,7 +97,7 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 <p>TASK: Calibrate the machine to print the emergency log. (Requirements: <strong>24px, Red Ink, Centered</strong>)</p>
               </div>
 
-              {/* TOOLBAR MAȘINĂ DE SCRIS (Rotițe / Comutatoare) */}
+              
               <div className="typewriter-toolbar">
                 <div className="tool-group">
                   <label>INK RIBBON</label>
@@ -135,7 +133,7 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 </div>
               </div>
 
-              {/* ROLA DE HÂRTIE */}
+              
               <div className="paper-roller-bg">
                 <div className="paper-sheet">
                   <p className="paper-text" style={{ color: culoare, textAlign: aliniere, fontSize: marime }}>
@@ -144,7 +142,7 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 </div>
               </div>
 
-              {/* ZONA DE JOS (Maneta de Print) */}
+            
               <div className="typewriter-footer">
                 <button className="btn-type-action" onClick={verificaFormatare}>
                   [ PULL CARRIAGE LEVER ]
