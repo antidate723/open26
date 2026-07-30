@@ -9,43 +9,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
-  
-  // Indexul care controlează STRICT caruselul (primele 3 poze)
-  const [indexModulJos, setIndexModulJos] = useState(0);
+  const [caruselDeschis, setCaruselDeschis] = useState(false);
+  const [indexCarusel, setIndexCarusel] = useState(0);
 
   const dialogCurent = dateDialoguri.dialoguri[dialogId];
 
-  // Panourile fixe de sus
   const panouriSus = [
     { id: 'sus-centru', clasa: 'panou-sus-centru', text: 'Modul 1' },
     { id: 'stanga-sus', clasa: 'panou-stanga-sus', text: 'Modul 2' },
     { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
   ];
 
-  // Acestea 3 sunt legate de săgeți (Carusel)
-  const moduleJosPoze = [
-    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
-    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
-    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
+  // Imaginile din carusel
+  const imaginiCarusel = [
+    { id: 'img1', titlu: 'Imaginea 1', src: '/bun.jpeg', descriere: 'Descriere prima imagine' },
+    { id: 'img2', titlu: 'Imaginea 2', src: '/bun.jpeg', descriere: 'Descriere a doua imagine' },
+    { id: 'img3', titlu: 'Imaginea 3', src: 'masabtn.png', descriere: 'Descriere a treia imagine' },
   ];
 
-  // Asta e doar o poză statică pe care poți da click (NU face parte din săgeți)
-  const modulMasa = { 
-    id: 'm8', 
-    clasa: 'modul-stanga-centru-jos', 
-    titlu: 'Modulul 8', 
-    imagine: '/masabtn.png' 
-  };
-
-  // Navigarea se face STRICT pe array-ul moduleJosPoze
-  const navigaPoze = (directie, e) => {
-    e.stopPropagation();
-    setIndexModulJos((prev) => {
+  const navigareCarusel = (directie, e) => {
+    if (e) e.stopPropagation();
+    setIndexCarusel((prev) => {
       let urmatorul = prev + directie;
-      
-      if (urmatorul >= moduleJosPoze.length) return 0;
-      if (urmatorul < 0) return moduleJosPoze.length - 1;
-      
+      if (urmatorul >= imaginiCarusel.length) return 0;
+      if (urmatorul < 0) return imaginiCarusel.length - 1;
       return urmatorul;
     });
   };
@@ -86,7 +73,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     if (isTyping) return;
 
     if (indexLinie < dialogCurent.linii.length - 1) {
-      setIndexLinie(prev => prev + 1);
+      setIndexLinie((prev) => prev + 1);
     } else {
       setDialogTerminat(true);
       if (onDialogTerminat) onDialogTerminat();
@@ -95,6 +82,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (caruselDeschis) {
+        if (e.key === 'ArrowLeft') navigareCarusel(-1);
+        if (e.key === 'ArrowRight') navigareCarusel(1);
+        if (e.key === 'Escape') setCaruselDeschis(false);
+        return;
+      }
+
       if (e.code === 'Space') {
         e.preventDefault();
         actiuneTreciMaiDeparte();
@@ -103,7 +97,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTyping, indexLinie, dialogCurent, onDialogTerminat]);
+  }, [isTyping, indexLinie, dialogCurent, onDialogTerminat, caruselDeschis]);
 
   if (!dialogCurent) return null;
 
@@ -111,12 +105,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   const SchimbaLumina = (e) => {
     e.stopPropagation();
-    setNivelLumina(prev => (prev < 3 ? prev + 1 : 0));
+    setNivelLumina((prev) => (prev < 3 ? prev + 1 : 0));
   };
 
   const handlePanouClick = (e, panouId) => {
     e.stopPropagation();
-    console.log(`Ai apăsat pe poza/modulul: ${panouId}`);
+    console.log(`Ai apăsat pe modulul: ${panouId}`);
   };
 
   return (
@@ -137,7 +131,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
-          
           <div className="bec-container">
             <div className="fir-bec" />
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`} />
@@ -147,8 +140,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           <div className="panou-lateral panou-dreapta" />
 
           <div className="container-panouri-central">
-            
-            {/* 1. PANOURILE DE SUS */}
             {panouriSus.map((panou) => (
               <button
                 key={panou.id}
@@ -159,48 +150,60 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </button>
             ))}
 
-            {/* 2. POZELE DIN CARUSEL (Doar 4, 5 și 6 sunt afectate de săgeți) */}
-            {moduleJosPoze.map((modul, idx) => {
-              const esteSelectat = idx === indexModulJos;
-              return (
-                <div
-                  key={modul.id}
-                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''}`}
-                  onClick={(e) => {
-                    setIndexModulJos(idx);
-                    handlePanouClick(e, modul.id);
-                  }}
-                >
-                  <img
-                    src={modul.imagine}
-                    alt={modul.titlu}
-                    onError={(e) => console.error("Eroare poză:", modul.imagine)}
-                  />
-                  <div className="tag-modul-jos">{modul.titlu}</div>
-                </div>
-              );
-            })}
-
-            {/* 3. MASA (Statică, independentă de săgeți) */}
+            {/* Singurul modul din dreapta jos */}
             <div
-              key={modulMasa.id}
-              className={`modul-poza-jos ${modulMasa.clasa}`}
-              onClick={(e) => handlePanouClick(e, modulMasa.id)}
+              className="modul-poza-jos modul-dreapta-jos"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCaruselDeschis(true);
+              }}
             >
-              <img
-                src={modulMasa.imagine}
-                alt={modulMasa.titlu}
-                onError={(e) => console.error("Eroare poză:", modulMasa.imagine)}
-              />
-              <div className="tag-modul-jos">{modulMasa.titlu}</div>
+              <img src="/bun.jpeg" alt="Galerie Imagini" />
+              <div className="tag-modul-jos">Galerie</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* POPUP MODAL CARUSEL */}
+      {caruselDeschis && (
+        <div className="modal-carusel-overlay" onClick={() => setCaruselDeschis(false)}>
+          <div className="modal-carusel-content" onClick={(e) => e.stopPropagation()}>
+            <button className="inchide-modal" onClick={() => setCaruselDeschis(false)}>
+              ✕
+            </button>
+
+            <div className="carusel-view">
+              <button className="sageata-carusel prev" onClick={(e) => navigareCarusel(-1, e)}>
+                ❮
+              </button>
+
+              <div className="carusel-slide-container fade">
+                <img
+                  src={imaginiCarusel[indexCarusel].src}
+                  alt={imaginiCarusel[indexCarusel].titlu}
+                  className="carusel-imagine"
+                />
+                <div className="carusel-detalii">
+                  <h3>{imaginiCarusel[indexCarusel].titlu}</h3>
+                  <p>{imaginiCarusel[indexCarusel].descriere}</p>
+                </div>
+              </div>
+
+              <button className="sageata-carusel next" onClick={(e) => navigareCarusel(1, e)}>
+                ❯
+              </button>
             </div>
 
-            {/* 4. SĂGEȚILE */}
-            <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
-              <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
-              <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
+            <div className="dots-container">
+              {imaginiCarusel.map((_, i) => (
+                <span
+                  key={i}
+                  className={`dot ${i === indexCarusel ? 'active' : ''}`}
+                  onClick={() => setIndexCarusel(i)}
+                />
+              ))}
             </div>
-
           </div>
         </div>
       )}
@@ -211,9 +214,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           onClick={actiuneTreciMaiDeparte}
           style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
-          <div className="dialog-name">
-            {dialogCurent.titlu}
-          </div>
+          <div className="dialog-name">{dialogCurent.titlu}</div>
 
           <p className="dialog-text">
             {textAfisat}
