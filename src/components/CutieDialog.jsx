@@ -306,8 +306,10 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     }
 
     if (panouId === 'sus-centru') {
-      if (!usaDeschisa) {
-        alert('This module is locked. Enter the correct door PIN first.');
+      // Verificăm dacă celelalte module (total TOTAL_PUZZLES - 1) sunt gata înainte de Modulul 1
+      const moduleFacuteInainte = moduleRezolvate.filter(id => id !== 'm1').length;
+      if (moduleFacuteInainte < TOTAL_PUZZLES - 1) {
+        alert('Modulul 1 poate fi făcut doar la sfârșit! Mai întâi rezolvă toate celelalte module.');
         return;
       }
       setChemistryModalOpen(true);
@@ -410,37 +412,40 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
         <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       )}
 
-      <div
-        style={{
-          position: 'absolute',
-          top: '15px',
-          left: '15px',
-          zIndex: 100,
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center',
-        }}
-      >
+      {/* Ascundem ceasul imediat ce Modulul 1 a fost finalizat */}
+      {!moduleRezolvate.includes('m1') && (
         <div
           style={{
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid #334155',
-            borderRadius: '8px',
-            padding: '6px 14px',
-            color: '#38bdf8',
-            fontFamily: 'monospace',
-            fontSize: '0.9rem',
-            fontWeight: 'bold',
+            position: 'absolute',
+            top: '15px',
+            left: '15px',
+            zIndex: 100,
             display: 'flex',
+            gap: '10px',
             alignItems: 'center',
-            gap: '6px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
           }}
         >
-          <Clock size={16} />
-          Time: {formateazaTimp(timpScurs)}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1px solid #334155',
+              borderRadius: '8px',
+              padding: '6px 14px',
+              color: '#38bdf8',
+              fontFamily: 'monospace',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+            }}
+          >
+            <Clock size={16} />
+            Time: {formateazaTimp(timpScurs)}
+          </div>
         </div>
-      </div>
+      )}
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
@@ -565,20 +570,23 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                 (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
                 (panou.id === 'sus-centru' && moduleRezolvate.includes('m1'));
 
+              const moduleFacuteInainte = moduleRezolvate.filter(id => id !== 'm1').length;
+              const esteBlocatModul1 = panou.id === 'sus-centru' && moduleFacuteInainte < TOTAL_PUZZLES - 1;
+
               return (
                 <div
                   key={panou.id}
                   className={`modul-podea ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
                   onClick={(e) => handlePanouClick(e, panou.id)}
                   style={{
-                    opacity: panou.id === 'sus-centru' && !usaDeschisa ? 0.6 : 1,
+                    opacity: esteBlocatModul1 ? 0.6 : 1,
                   }}
                 >
                   <img src={panou.imagine} alt={panou.titlu} />
                   <div className="tag-modul-podea">
                     {panou.titlu}
                     {esteRezolvatPanou && <Check size={14} />}
-                    {panou.id === 'sus-centru' && !usaDeschisa && ' 🔒'}
+                    {esteBlocatModul1 && ' 🔒'}
                   </div>
                 </div>
               );
@@ -596,49 +604,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {moduleRezolvate.length === TOTAL_PUZZLES && usaDeschisa && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '30px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 99999,
-            background: 'rgba(15, 23, 42, 0.95)',
-            border: '2px solid #4ade80',
-            padding: '15px 30px',
-            borderRadius: '12px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px',
-          }}
-        >
-          <span style={{ color: '#4ade80', fontWeight: 'bold', fontSize: '1rem' }}>
-            All modules are complete!
-          </span>
-          <button
-            onClick={() => {
-              setEcranFinalComplet(true);
-              localStorage.setItem('infoMotion_ecranFinalComplet', 'true');
-            }}
-            style={{
-              background: '#22c55e',
-              color: '#fff',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '1rem',
-            }}
-          >
-            Show Final Screen
-          </button>
         </div>
       )}
 
@@ -703,6 +668,20 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                 'infoMotion_notaChimie',
                 'H2SO4 chemistry reaction completed'
               );
+
+              // 1. Oprim timpul
+              setJocTerminatTimp(true);
+              localStorage.setItem('infoMotion_jocTerminatTimp', 'true');
+
+              // 2. Verificăm și salvăm inimile dacă există o cheie în localStorage (de ex. 'infoMotion_inimi' sau 'infoMotion_inimiConsumate')
+              const inimiSalvate = localStorage.getItem('infoMotion_inimiConsumate') || localStorage.getItem('infoMotion_inimi');
+              if (inimiSalvate) {
+                localStorage.setItem('infoMotion_inimiConsumateFinal', inimiSalvate);
+              }
+
+              // 3. Declanșăm direct ecranul final complet (pagina neagră de victorie)
+              setEcranFinalComplet(true);
+              localStorage.setItem('infoMotion_ecranFinalComplet', 'true');
 
               const imagineFinalaNoua = '/backrounwin.png';
               setFundalFinal(imagineFinalaNoua);
