@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, Check, Zap, Clock, KeyRound, Trophy } from 'lucide-react';
+import { Check, Clock, KeyRound, Trophy } from 'lucide-react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 
@@ -84,9 +84,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   ];
 
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'poza-stiva-1', titlu: 'Circuit 1', imagine: '/bun.jpeg', raspunsCorect: '12' },
-    { id: 'm5', clasa: 'poza-stiva-2', titlu: 'Circuit 2', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
-    { id: 'm6', clasa: 'poza-stiva-3', titlu: 'Circuit 3', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
+    { id: 'm4', clasa: 'poza-stiva-1', titlu: 'Circuit 1', imagine: '/circuit1.png', raspunsCorect: '12' },
+    { id: 'm5', clasa: 'poza-stiva-2', titlu: 'Circuit 2', imagine: '/circuit2.png', raspunsCorect: '5' },
+    { id: 'm6', clasa: 'poza-stiva-3', titlu: 'Circuit 3', imagine: '/circuit3.png', raspunsCorect: '10' },
   ];
 
   const modulMasa = {
@@ -492,66 +492,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
           </div>
 
-          <div className="sectiune-dreapta-sigurante" style={{ zIndex: 50, position: 'relative' }}>
-            <div
-              style={{
-                color: '#cbd5e1',
-                fontSize: '0.85rem',
-                marginBottom: '6px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-              }}
-            >
-              Circuit Board
-            </div>
+          <div className="sectiune-dreapta-sigurante">
+            <div className="titlu-circuit-board">Circuit Board</div>
 
             {moduleJosPoze.map((modul) => {
               const esteRezolvat = moduleRezolvate.includes(modul.id);
 
               return (
-                <div
-                  key={modul.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    marginBottom: '8px',
-                  }}
-                >
+                <div key={modul.id} className="rand-circuit-input">
                   <input
                     type="text"
                     placeholder="Answer..."
                     value={valoriInput[modul.id]}
                     onChange={(e) => handleInputChange(modul.id, e.target.value)}
                     onClick={(e) => e.stopPropagation()}
-                    style={{
-                      background: '#1e293b',
-                      border: '1px solid #475569',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      width: '70px',
-                      fontSize: '0.8rem',
-                    }}
+                    className="circuit-input"
                   />
                   <button
                     onClick={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)}
-                    style={{
-                      background: esteRezolvat ? '#22c55e' : '#3b82f6',
-                      color: '#fff',
-                      border: 'none',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                    }}
+                    className={`circuit-btn ${esteRezolvat ? 'rezolvat' : ''}`}
                   >
                     {esteRezolvat ? '✓' : 'OK'}
                   </button>
                   {erori[modul.id] && (
-                    <span style={{ color: '#f87171', fontSize: '0.75rem' }}>
-                      {erori[modul.id]}
-                    </span>
+                    <span className="circuit-error">{erori[modul.id]}</span>
                   )}
                 </div>
               );
@@ -574,16 +538,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                   }}
                 >
                   <img src={modul.imagine} alt={modul.titlu} />
-                  <div
-                    className="tag-circuit-mic"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    {modul.titlu} {esteDejaRezolvat && <Check size={12} />}
+                  <div className="tag-circuit-mic">
+                     {esteDejaRezolvat && <Check size={12} />}
                   </div>
                 </div>
               );
@@ -603,20 +559,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           </div>
 
           <div className="container-module-podea">
-            <button
-              className="buton-comutator-lumina buton-podea"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!usaDeschisa) {
-                  setNivelLumina((prev) => (prev < 3 ? prev + 1 : 0));
-                }
-              }}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              <Lightbulb size={24} />
-              <span>Light</span>
-            </button>
-
             {panouriPodea.map((panou) => {
               const esteRezolvatPanou =
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
@@ -633,15 +575,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                   }}
                 >
                   <img src={panou.imagine} alt={panou.titlu} />
-                  <div
-                    className="tag-modul-podea"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px',
-                    }}
-                  >
+                  <div className="tag-modul-podea">
                     {panou.titlu}
                     {esteRezolvatPanou && <Check size={14} />}
                     {panou.id === 'sus-centru' && !usaDeschisa && ' 🔒'}
@@ -656,15 +590,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               onClick={handleMasaClick}
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} />
-              <div
-                className="tag-modul-podea"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                }}
-              >
+              <div className="tag-modul-podea">
                 {modulMasa.titlu}
                 {moduleRezolvate.includes('m8') && <Check size={14} />}
               </div>
