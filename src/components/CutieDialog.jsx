@@ -30,6 +30,16 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [modul2Open, setModul2Open] = useState(false);
   const [chemistryModalOpen, setChemistryModalOpen] = useState(false); 
 
+  // Sistem de ceas / cronometru global salvat în LocalStorage
+  const [timpScurs, setTimpScurs] = useState(() => {
+    const timpSalvat = localStorage.getItem('infoMotion_timpScurs');
+    return timpSalvat ? parseInt(timpSalvat, 10) : 0;
+  });
+
+  const [jocTerminatTimp, setJocTerminatTimp] = useState(() => {
+    return localStorage.getItem('infoMotion_jocTerminatTimp') === 'true';
+  });
+
   const [moduleRezolvate, setModuleRezolvate] = useState(() => {
     const salvat = localStorage.getItem('infoMotion_rezolvate');
     return salvat ? JSON.parse(salvat) : [];
@@ -60,6 +70,28 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
 
+  // Timer efect - rulează secundă cu secundă și salvează în localStorage
+  useEffect(() => {
+    if (jocTerminatTimp || moduleRezolvate.length === TOTAL_PUZZLES) return;
+
+    const timer = setInterval(() => {
+      setTimpScurs(prev => {
+        const nouTimp = prev + 1;
+        localStorage.setItem('infoMotion_timpScurs', nouTimp.toString());
+        return nouTimp;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [jocTerminatTimp, moduleRezolvate.length]);
+
+  // Formatare timp în MM:SS
+  const formateazaTimp = (secundeTotale) => {
+    const minute = Math.floor(secundeTotale / 60);
+    const secunde = secundeTotale % 60;
+    return `${minute.toString().padStart(2, '0')}:${secunde.toString().padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     const rezolvateSursa = JSON.parse(localStorage.getItem('infoMotion_rezolvate') || '[]');
     const deLaSigurante = rezolvateSursa.filter(id => ['m4', 'm5', 'm6'].includes(id)).length;
@@ -68,7 +100,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   useEffect(() => {
     localStorage.setItem('infoMotion_rezolvate', JSON.stringify(moduleRezolvate));
-  }, [moduleRezolvate]);
+    if (moduleRezolvate.length === TOTAL_PUZZLES && !jocTerminatTimp) {
+      setJocTerminatTimp(true);
+      localStorage.setItem('infoMotion_jocTerminatTimp', 'true');
+    }
+  }, [moduleRezolvate, jocTerminatTimp]);
 
   useEffect(() => {
     localStorage.setItem('infoMotion_moduleGlobalRezolvate', JSON.stringify(moduleGlobalRezolvate));
@@ -215,9 +251,30 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
-      <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
-      </button>
+      {/* Widget Ceas Cronometru & Lumina Sus */}
+      <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+          <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
+        </button>
+
+        {/* Ceasul smeker care contorizează timpul în LocalStorage */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.85)',
+          border: '1px solid #334155',
+          borderRadius: '8px',
+          padding: '6px 14px',
+          color: '#38bdf8',
+          fontFamily: 'monospace',
+          fontSize: '0.9rem',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+        }}>
+          ⏱️ Timp: {formateazaTimp(timpScurs)}
+        </div>
+      </div>
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
@@ -271,7 +328,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             </div>
             {moduleRezolvate.length === TOTAL_PUZZLES && (
               <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                Toate sistemele funcționale! <Zap size={18} />
+                Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
               </div>
             )}
           </div>
