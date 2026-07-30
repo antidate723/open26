@@ -1,0 +1,242 @@
+.chem-box {
+  width: 95%;
+  max-width: 820px;
+  background: #0d0d0d;
+  border: 1px solid #3a3a3a;
+  padding: 24px;
+  position: relative;
+  z-index: 2147483000;
+  pointer-events: auto;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.chem-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #6a6a6a;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  font-family: 'Courier New', Courier, monospace;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.chem-close-btn:hover {
+  color: #d4af37;
+}
+
+.chem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #3a3a3a;
+  padding-bottom: 12px;
+}
+
+.chem-title {
+  color: #d4af37;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  text-align: left;
+}
+
+.chem-hearts {
+  display: flex;
+  gap: 8px;
+}
+
+.chem-heart {
+  font-size: 18px;
+  color: #3a3a3a;
+  transition: color 0.3s ease;
+}
+
+.chem-heart.filled {
+  color: #b33a3a;
+}
+
+.chem-message {
+  background: #141414;
+  border: 1px solid #3a3a3a;
+  border-left: 3px solid #d4af37;
+  padding: 10px 14px;
+  margin: 10px 0;
+  text-align: left;
+  font-size: 13px;
+  color: #c9c9c9;
+  transition: all 0.3s ease;
+}
+
+.chem-message.wrong {
+  border-left-color: #b33a3a;
+  color: #e0a0a0;
+}
+
+.chem-beaker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.chem-beaker {
+  width: 100px;
+  height: 130px;
+  border-left: 3px solid #6a6a6a;
+  border-right: 3px solid #6a6a6a;
+  border-bottom: 3px solid #6a6a6a;
+  position: relative;
+  background: #141414;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+@keyframes chem-spargere {
+  0%, 100% { transform: translateX(0) scale(1); }
+  20% { transform: translateX(-12px) scale(0.95) rotate(-5deg); }
+  40% { transform: translateX(12px) scale(1.05) rotate(5deg); }
+  60% { transform: translateX(-8px) scale(0.98); }
+  80% { transform: translateX(8px) scale(1.02); }
+}
+
+.chem-beaker.spart {
+  animation: chem-spargere 0.5s ease-in-out;
+}
+
+.chem-beaker-fill {
+  width: 100%;
+  transition: all 0.4s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chem-beaker-fill span {
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.chem-beaker-label {
+  margin-top: 8px;
+  color: #8a8a8a;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chem-equation {
+  background: #141414;
+  border: 1px solid #3a3a3a;
+  padding: 8px 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: #d4af37;
+}
+
+.chem-hint {
+  font-size: 12px;
+  color: #6a6a6a;
+  margin: 10px 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chem-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.chem-tube {
+  background: #141414;
+  border: 1px solid #3a3a3a;
+  padding: 10px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.chem-tube:hover {
+  border-color: var(--tube-color);
+  transform: translateY(-2px);
+}
+
+.chem-tube-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #d4d4d4;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.chem-tube-formula {
+  font-size: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 2px;
+}
+
+.chem-tube-desc {
+  font-size: 10px;
+  color: #6a6a6a;
+  text-align: center;
+  min-height: 26px;
+}
+
+.chem-status {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chem-status-success {
+  color: #6a9a5a;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.chem-progress {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chem-progress-label {
+  font-size: 11px;
+  color: #6a6a6a;
+  margin-right: 4px;
+  text-transform: uppercase;
+}
+
+.chem-progress-dot {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #d4d4d4;
+  font-weight: bold;
+  background: #141414;
+}
+
+.chem-progress-dot.done {
+  background: #2a2410;
+  border-color: #d4af37;
+  color: #d4af37;
+}
