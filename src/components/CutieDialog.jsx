@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
+import { Lightbulb, Check, Zap } from 'lucide-react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 
-// Importurile tale pentru toate mini-jocurile și carnet
 import MathPuzzleModal from './MathPuzzleModal';
 import MusicPuzzleModal from './MusicPuzzleModal';
 import MasinaScrisModal from './MasinaScrisModal';
 import CarnetNotite from './CarnetNotite'; 
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 5; // Aici numărul a crescut pentru a include modul2 (mașina de scris) și m3 (muzică)
+const TOTAL_PUZZLES = 5; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -23,7 +23,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [caruselDeschis, setCaruselDeschis] = useState(false);
   const [carnetDeschis, setCarnetDeschis] = useState(false); 
 
-  // Stările pentru modalele de mini-jocuri
   const [mathModalOpen, setMathModalOpen] = useState(false);
   const [m8Stage, setM8Stage] = useState(0);
   const [musicModalOpen, setMusicModalOpen] = useState(false);
@@ -46,9 +45,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const dialogCurent = dateDialoguri.dialoguri[activeDialogId];
 
   const panouriSus = [
-    { id: 'sus-centru', clasa: 'panou-sus-centru', text: 'Modul 1' },
-    { id: 'stanga-sus', clasa: 'panou-stanga-sus', text: 'Modul 2' },
-    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
+    { id: 'sus-centru', clasa: 'panou-sus-centru', titlu: 'Modul 1', imagine: '/modul1.png' },
+    { id: 'stanga-sus', clasa: 'panou-stanga-sus', titlu: 'Modul 2', imagine: '/typewriter.png' },
+    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pick-up.png' },
   ];
 
   const moduleJosPoze = [
@@ -59,7 +58,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
 
-  // Calculăm lumina inițială bazată strict pe modulele de la siguranțe (m4, m5, m6)
   useEffect(() => {
     const rezolvateSursa = JSON.parse(localStorage.getItem('infoMotion_rezolvate') || '[]');
     const deLaSigurante = rezolvateSursa.filter(id => ['m4', 'm5', 'm6'].includes(id)).length;
@@ -172,7 +170,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         const noiRezolvate = [...moduleRezolvate, id];
         setModuleRezolvate(noiRezolvate);
         
-        // Lumina se modifică DOAR pentru modulele de la siguranțe (m4, m5, m6)
         if (['m4', 'm5', 'm6'].includes(id)) {
           setNivelLumina(prev => Math.min(prev + 1, 3));
         }
@@ -214,8 +211,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
-      <button className="buton-comutator-lumina" onClick={SchimbaLumina}>
-        💡 Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
+      <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
       </button>
 
       {estePenultimulSauMaiDeparte && (
@@ -236,8 +233,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
           </div>
 
-          <div className="panou-lateral panou-stanga"></div>
-
           <div className="panou-dreapta panou-input-multiplu">
             <h3>Tablou Siguranțe</h3>
             <div className="lista-mini-formulare">
@@ -247,7 +242,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
                   <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
                     <h4>{modul.titlu}</h4>
                     {esteRezolvat ? (
-                      <span className="status-verde-mic">Conectat ✅</span>
+                      <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Conectat <Check size={14} />
+                      </span>
                     ) : (
                       <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
                         <div className="input-grup-orizontal">
@@ -269,27 +266,31 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               })}
             </div>
             {moduleRezolvate.length === TOTAL_PUZZLES && (
-              <div className="status-final-curent">
-                Toate sistemele funcționale! ⚡
+              <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                Toate sistemele funcționale! <Zap size={18} />
               </div>
             )}
           </div>
 
           <div className="container-panouri-central">
+            
             {panouriSus.map((panou) => {
-              // Verifică pentru fiecare modul dacă e rezolvat ca să-i pună bifa ✅ (m3 pentru Muzică, m2 pentru Mașina de scris)
               const esteRezolvatPanou = 
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
-                (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2'));
+                (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
+                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1'));
                 
               return (
-                <button
+                <div
                   key={panou.id}
-                  className={`panou-card ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
+                  className={`modul-poza-jos ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
                   onClick={(e) => handlePanouClick(e, panou.id)}
                 >
-                  <span>{panou.text} {esteRezolvatPanou ? '✅' : ''}</span>
-                </button>
+                  <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
+                  <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
+                  </div>
+                </div>
               );
             })}
 
@@ -308,21 +309,22 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
                   }}
                 >
                   <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
-                  <div className="tag-modul-jos">
-                    {modul.titlu} {esteDejaRezolvat ? '✅' : ''}
+                  <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    {modul.titlu} {esteDejaRezolvat && <Check size={14} />}
                   </div>
                 </div>
               );
             })}
 
-            {/* MODULUL 8 - MASA (pe podea) */}
             <div
               key={modulMasa.id}
               className={`modul-poza-jos ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
               onClick={handleMasaClick}
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
-              <div className="tag-modul-jos">{modulMasa.titlu} {moduleRezolvate.includes("m8") ? '✅' : ''}</div>
+              <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                {modulMasa.titlu} {moduleRezolvate.includes("m8") && <Check size={14} />}
+              </div>
             </div>
 
             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
@@ -361,7 +363,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         </div>
       )}
 
-      {/* RENDERIZARE MODAL MATEMATICĂ */}
       {mathModalOpen && (
         <MathPuzzleModal
           stage={m8Stage}
@@ -380,7 +381,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         />
       )}
 
-      {/* RENDERIZARE MODAL MUZICĂ (Modul 3) */}
       {musicModalOpen && (
         <MusicPuzzleModal
           onClose={() => setMusicModalOpen(false)}
@@ -395,7 +395,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         />
       )}
 
-      {/* RENDERIZARE MODAL MAȘINĂ DE SCRIS (Modul 2) */}
       {modul2Open && (
         <MasinaScrisModal
           isAlreadySolved={moduleRezolvate.includes("m2")}
