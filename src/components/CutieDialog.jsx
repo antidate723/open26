@@ -2,18 +2,29 @@ import { useState, useEffect } from 'react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 
-export default function CutieDialog({ dialogId, onDialogTerminat }) {
+const TOTAL_MODULE_JOC = 10;
+
+export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
   const [textAfisat, setTextAfisat] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
-  
+
   const [indexModulJos, setIndexModulJos] = useState(0);
   const [caruselDeschis, setCaruselDeschis] = useState(false);
 
-  const [moduleRezolvate, setModuleRezolvate] = useState([]); 
+  const [moduleRezolvate, setModuleRezolvate] = useState(() => {
+    const salvat = localStorage.getItem('infoMotion_rezolvate');
+    return salvat ? JSON.parse(salvat) : [];
+  });
+
+  const [moduleGlobalRezolvate, setModuleGlobalRezolvate] = useState(() => {
+    const salvatGlobal = localStorage.getItem('infoMotion_moduleGlobalRezolvate');
+    return salvatGlobal ? JSON.parse(salvatGlobal) : [];
+  });
+
   const [valoriInput, setValoriInput] = useState({ m4: '', m5: '', m6: '' });
   const [erori, setErori] = useState({ m4: '', m5: '', m6: '' });
 
@@ -26,17 +37,29 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   ];
 
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg', raspunsCorect: '1' },
-    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/nivel1.jpeg', raspunsCorect: '2' },
-    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/nivel2.jpeg', raspunsCorect: '3' },
+    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg', raspunsCorect: '12' },
+    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
+    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
   ];
 
-  const modulMasa = { 
-    id: 'm8', 
-    clasa: 'modul-stanga-centru-jos', 
-    titlu: 'Modulul 8', 
-    imagine: '/masabtn.png' 
+  const modulMasa = {
+    id: 'm8',
+    clasa: 'modul-stanga-centru-jos',
+    titlu: 'Modulul 8',
+    imagine: '/masabtn.png'
   };
+
+  useEffect(() => {
+    setNivelLumina(moduleRezolvate.length);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('infoMotion_rezolvate', JSON.stringify(moduleRezolvate));
+  }, [moduleRezolvate]);
+
+  useEffect(() => {
+    localStorage.setItem('infoMotion_moduleGlobalRezolvate', JSON.stringify(moduleGlobalRezolvate));
+  }, [moduleGlobalRezolvate]);
 
   const navigaPoze = (directie, e) => {
     if (e && e.stopPropagation) e.stopPropagation();
@@ -93,13 +116,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT') return; 
+      if (e.target.tagName === 'INPUT') return;
 
       if (caruselDeschis) {
         if (e.key === 'ArrowLeft') navigaPoze(-1, null);
         if (e.key === 'ArrowRight') navigaPoze(1, null);
         if (e.key === 'Escape') setCaruselDeschis(false);
-        return; 
+        return;
       }
 
       if (e.code === 'Space') {
@@ -119,15 +142,23 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     }
   };
 
+  const adaugaLaProgresGlobal = (idModul) => {
+    const idUnicGlobal = `${dialogId}-${idModul}`;
+    setModuleGlobalRezolvate((prev) => {
+      if (prev.includes(idUnicGlobal)) return prev;
+      return [...prev, idUnicGlobal];
+    });
+  };
+
   const verificaRaspunsMultiplu = (e, id, raspunsCorect) => {
     e.preventDefault();
-    
+
     if (valoriInput[id].trim() === raspunsCorect) {
       if (!moduleRezolvate.includes(id)) {
         const noiRezolvate = [...moduleRezolvate, id];
         setModuleRezolvate(noiRezolvate);
-        
         setNivelLumina(noiRezolvate.length);
+        adaugaLaProgresGlobal(id);
       }
     } else {
       setErori(prev => ({ ...prev, [id]: 'Incorect' }));
@@ -148,6 +179,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     console.log(`Ai apăsat pe panoul: ${panouId}`);
   };
 
+  const procentProgres = Math.round((moduleRezolvate.length / moduleJosPoze.length) * 100);
+
   return (
     <div className="dialog-overlay">
       <div
@@ -166,6 +199,19 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
+          <div className="container-progres-global">
+            <div className="info-progres-text">
+              <span>Progres Escape Room: {moduleRezolvate.length} / {moduleJosPoze.length} Module</span>
+              <span>{procentProgres}%</span>
+            </div>
+            <div className="baral-progres-fundal">
+              <div
+                className="bara-progres-umpluta"
+                style={{ width: `${procentProgres}%` }}
+              />
+            </div>
+          </div>
+
           <div className="bec-container">
             <div className="fir-bec" />
             <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`} />
@@ -173,45 +219,45 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
           <div className="panou-lateral panou-stanga" />
 
-          <div className="panou-lateral panou-dreapta panou-input-multiplu">
-             <h3>Tablou Siguranțe</h3>
-             
-             <div className="lista-mini-formulare">
-               {moduleJosPoze.map((modul) => {
-                 const esteRezolvat = moduleRezolvate.includes(modul.id);
-                 
-                 return (
-                   <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
-                     <h4>{modul.titlu}</h4>
-                     
-                     {esteRezolvat ? (
-                       <span className="status-verde-mic">Conectat ✅</span>
-                     ) : (
-                       <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
-                         <div className="input-grup-orizontal">
-                           <input
-                             type="text"
-                             value={valoriInput[modul.id]}
-                             onChange={(e) => handleInputChange(modul.id, e.target.value)}
-                             onClick={(e) => e.stopPropagation()}
-                             placeholder="ex: 10"
-                             autoComplete="off"
-                           />
-                           <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
-                         </div>
-                         {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
-                       </form>
-                     )}
-                   </div>
-                 );
-               })}
-             </div>
-             
-             {moduleRezolvate.length === 3 && (
-                <div className="status-final-curent">
-                  Toate sistemele funcționale! ⚡
-                </div>
-             )}
+          <div className="panou-dreapta panou-input-multiplu">
+            <h3>Tablou Siguranțe</h3>
+
+            <div className="lista-mini-formulare">
+              {moduleJosPoze.map((modul) => {
+                const esteRezolvat = moduleRezolvate.includes(modul.id);
+
+                return (
+                  <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
+                    <h4>{modul.titlu}</h4>
+
+                    {esteRezolvat ? (
+                      <span className="status-verde-mic">Conectat ✅</span>
+                    ) : (
+                      <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
+                        <div className="input-grup-orizontal">
+                          <input
+                            type="text"
+                            value={valoriInput[modul.id]}
+                            onChange={(e) => handleInputChange(modul.id, e.target.value)}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder="ex: 10"
+                            autoComplete="off"
+                          />
+                          <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
+                        </div>
+                        {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
+                      </form>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {moduleRezolvate.length === moduleJosPoze.length && (
+              <div className="status-final-curent">
+                Toate sistemele funcționale! ⚡
+              </div>
+            )}
           </div>
 
           <div className="container-panouri-central">
@@ -294,29 +340,29 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
       {caruselDeschis && (
         <div className="galerie-fullscreen" onClick={() => setCaruselDeschis(false)}>
-          <button 
-            className="buton-inchidere-galerie" 
+          <button
+            className="buton-inchidere-galerie"
             onClick={(e) => { e.stopPropagation(); setCaruselDeschis(false); }}
           >
             ×
           </button>
-          
-          <button 
-            className="sageata-galerie stanga" 
+
+          <button
+            className="sageata-galerie stanga"
             onClick={(e) => navigaPoze(-1, e)}
           >
             ❮
           </button>
-          
-          <img 
-            src={moduleJosPoze[indexModulJos].imagine} 
-            alt={moduleJosPoze[indexModulJos].titlu} 
+
+          <img
+            src={moduleJosPoze[indexModulJos].imagine}
+            alt={moduleJosPoze[indexModulJos].titlu}
             className="galerie-imagine"
-            onClick={(e) => e.stopPropagation()} 
+            onClick={(e) => e.stopPropagation()}
           />
-          
-          <button 
-            className="sageata-galerie dreapta" 
+
+          <button
+            className="sageata-galerie dreapta"
             onClick={(e) => navigaPoze(1, e)}
           >
             ❯
