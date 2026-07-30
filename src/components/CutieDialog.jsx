@@ -10,8 +10,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
   
-  // Indexul care controlează STRICT caruselul (primele 3 poze)
   const [indexModulJos, setIndexModulJos] = useState(0);
+  const [caruselDeschis, setCaruselDeschis] = useState(false);
+
+  const [moduleRezolvate, setModuleRezolvate] = useState([]); 
+  const [valoriInput, setValoriInput] = useState({ m4: '', m5: '', m6: '' });
+  const [erori, setErori] = useState({ m4: '', m5: '', m6: '' });
 
   const dialogCurent = dateDialoguri.dialoguri[dialogId];
 
@@ -21,14 +25,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', text: 'Modul 3' },
   ];
 
-  // Acestea 3 sunt legate de săgeți (Carusel)
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg' },
-    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/bun.jpeg' },
-    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/bun.jpeg' },
+    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg', raspunsCorect: '1' },
+    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/nivel1.jpeg', raspunsCorect: '2' },
+    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/nivel2.jpeg', raspunsCorect: '3' },
   ];
 
-  // Asta e doar o poză statică pe care poți da click (NU face parte din săgeți)
   const modulMasa = { 
     id: 'm8', 
     clasa: 'modul-stanga-centru-jos', 
@@ -36,15 +38,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     imagine: '/masabtn.png' 
   };
 
-  // Navigarea se face STRICT pe array-ul moduleJosPoze
   const navigaPoze = (directie, e) => {
-    e.stopPropagation();
+    if (e && e.stopPropagation) e.stopPropagation();
     setIndexModulJos((prev) => {
       let urmatorul = prev + directie;
-      
       if (urmatorul >= moduleJosPoze.length) return 0;
       if (urmatorul < 0) return moduleJosPoze.length - 1;
-      
       return urmatorul;
     });
   };
@@ -94,11 +93,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT') return; 
+
       if (caruselDeschis) {
-        if (e.key === 'ArrowLeft') navigareCarusel(-1);
-        if (e.key === 'ArrowRight') navigareCarusel(1);
+        if (e.key === 'ArrowLeft') navigaPoze(-1, null);
+        if (e.key === 'ArrowRight') navigaPoze(1, null);
         if (e.key === 'Escape') setCaruselDeschis(false);
-        return;
+        return; 
       }
 
       if (e.code === 'Space') {
@@ -111,6 +112,28 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isTyping, indexLinie, dialogCurent, onDialogTerminat, caruselDeschis]);
 
+  const handleInputChange = (id, valoare) => {
+    setValoriInput(prev => ({ ...prev, [id]: valoare }));
+    if (erori[id]) {
+      setErori(prev => ({ ...prev, [id]: '' }));
+    }
+  };
+
+  const verificaRaspunsMultiplu = (e, id, raspunsCorect) => {
+    e.preventDefault();
+    
+    if (valoriInput[id].trim() === raspunsCorect) {
+      if (!moduleRezolvate.includes(id)) {
+        const noiRezolvate = [...moduleRezolvate, id];
+        setModuleRezolvate(noiRezolvate);
+        
+        setNivelLumina(noiRezolvate.length);
+      }
+    } else {
+      setErori(prev => ({ ...prev, [id]: 'Incorect' }));
+    }
+  };
+
   if (!dialogCurent) return null;
 
   const estePenultimulSauMaiDeparte = indexLinie >= dialogCurent.linii.length - 2;
@@ -122,7 +145,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
 
   const handlePanouClick = (e, panouId) => {
     e.stopPropagation();
-    console.log(`Ai apăsat pe modulul: ${panouId}`);
+    console.log(`Ai apăsat pe panoul: ${panouId}`);
   };
 
   return (
@@ -149,7 +172,47 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           </div>
 
           <div className="panou-lateral panou-stanga" />
-          <div className="panou-lateral panou-dreapta" />
+
+          <div className="panou-lateral panou-dreapta panou-input-multiplu">
+             <h3>Tablou Siguranțe</h3>
+             
+             <div className="lista-mini-formulare">
+               {moduleJosPoze.map((modul) => {
+                 const esteRezolvat = moduleRezolvate.includes(modul.id);
+                 
+                 return (
+                   <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
+                     <h4>{modul.titlu}</h4>
+                     
+                     {esteRezolvat ? (
+                       <span className="status-verde-mic">Conectat ✅</span>
+                     ) : (
+                       <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
+                         <div className="input-grup-orizontal">
+                           <input
+                             type="text"
+                             value={valoriInput[modul.id]}
+                             onChange={(e) => handleInputChange(modul.id, e.target.value)}
+                             onClick={(e) => e.stopPropagation()}
+                             placeholder="ex: 10"
+                             autoComplete="off"
+                           />
+                           <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
+                         </div>
+                         {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
+                       </form>
+                     )}
+                   </div>
+                 );
+               })}
+             </div>
+             
+             {moduleRezolvate.length === 3 && (
+                <div className="status-final-curent">
+                  Toate sistemele funcționale! ⚡
+                </div>
+             )}
+          </div>
 
           <div className="container-panouri-central">
             {panouriSus.map((panou) => (
@@ -162,15 +225,17 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               </button>
             ))}
 
-            {/* 2. POZELE DIN CARUSEL (Doar 4, 5 și 6 sunt afectate de săgeți) */}
             {moduleJosPoze.map((modul, idx) => {
               const esteSelectat = idx === indexModulJos;
+              const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
+
               return (
                 <div
                   key={modul.id}
-                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''}`}
+                  className={`modul-poza-jos ${modul.clasa} ${esteSelectat ? 'poza-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
                   onClick={(e) => {
                     setIndexModulJos(idx);
+                    setCaruselDeschis(true);
                     handlePanouClick(e, modul.id);
                   }}
                 >
@@ -179,12 +244,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
                     alt={modul.titlu}
                     onError={(e) => console.error("Eroare poză:", modul.imagine)}
                   />
-                  <div className="tag-modul-jos">{modul.titlu}</div>
+                  <div className="tag-modul-jos">
+                    {modul.titlu} {esteDejaRezolvat ? '✅' : ''}
+                  </div>
                 </div>
               );
             })}
 
-            {/* 3. MASA (Statică, independentă de săgeți) */}
             <div
               key={modulMasa.id}
               className={`modul-poza-jos ${modulMasa.clasa}`}
@@ -198,7 +264,6 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
               <div className="tag-modul-jos">{modulMasa.titlu}</div>
             </div>
 
-            {/* 4. SĂGEȚILE */}
             <div className="navigatie-poze-jos" onClick={(e) => e.stopPropagation()}>
               <button className="sageata-poza prev-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
               <button className="sageata-poza next-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
@@ -214,18 +279,48 @@ export default function CutieDialog({ dialogId, onDialogTerminat }) {
           style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
           <div className="dialog-name">{dialogCurent.titlu}</div>
-
           <p className="dialog-text">
             {textAfisat}
             <span className="cursor-blink">|</span>
           </p>
-
           <div
             className="dialog-hint"
             style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}
           >
             Press Space to continue ▼
           </div>
+        </div>
+      )}
+
+      {caruselDeschis && (
+        <div className="galerie-fullscreen" onClick={() => setCaruselDeschis(false)}>
+          <button 
+            className="buton-inchidere-galerie" 
+            onClick={(e) => { e.stopPropagation(); setCaruselDeschis(false); }}
+          >
+            ×
+          </button>
+          
+          <button 
+            className="sageata-galerie stanga" 
+            onClick={(e) => navigaPoze(-1, e)}
+          >
+            ❮
+          </button>
+          
+          <img 
+            src={moduleJosPoze[indexModulJos].imagine} 
+            alt={moduleJosPoze[indexModulJos].titlu} 
+            className="galerie-imagine"
+            onClick={(e) => e.stopPropagation()} 
+          />
+          
+          <button 
+            className="sageata-galerie dreapta" 
+            onClick={(e) => navigaPoze(1, e)}
+          >
+            ❯
+          </button>
         </div>
       )}
     </div>
