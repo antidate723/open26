@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
-
+import CarnetNotite from './CarnetNotite';
 const TOTAL_MODULE_JOC = 10;
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
@@ -11,6 +11,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [nivelLumina, setNivelLumina] = useState(0);
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [dialogTerminat, setDialogTerminat] = useState(false);
+  const [carnetDeschis, setCarnetDeschis] = useState(false);
 
   const [indexModulJos, setIndexModulJos] = useState(0);
   const [caruselDeschis, setCaruselDeschis] = useState(false);
@@ -116,7 +117,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT') return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (caruselDeschis) {
         if (e.key === 'ArrowLeft') navigaPoze(-1, null);
@@ -337,6 +338,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
           </div>
         </div>
       )}
+      <CarnetNotite/>
 
       {caruselDeschis && (
         <div className="galerie-fullscreen" onClick={() => setCaruselDeschis(false)}>
