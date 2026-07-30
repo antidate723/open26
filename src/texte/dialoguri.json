@@ -25,6 +25,17 @@
         "The screen is covered in dust, but it still works.",
         "It's asking for some kind of special formatting to run the program."
       ]
+    },
+    "masa_mate":{
+      "id" : "masa_mate",
+      "titlu" : "Dean",
+      "linii" : 
+      [
+        "Hmm... what's this?",
+        "Just a dusty piece of paper abandoned on the desk...",
+        "Wait, these are number sequences. It looks like an old security protocol left behind by the engineers.",
+        "Let's see if I can crack the pattern."
+      ]
     }
   }
 }
