@@ -34,7 +34,6 @@
   padding: 15px 25px;
   position: relative;
   cursor: pointer;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   z-index: 10;
@@ -119,6 +118,7 @@
   height: 36px;
   background-color: #fffbcf;
   border-radius: 50%;
+  /* Am lăsat glow-ul becului doar pentru mecanică, fiindcă e sursa reală de lumină */
   box-shadow: 
     0 0 20px #ffea79,
     0 0 45px #ffea79,
@@ -135,24 +135,11 @@
   animation: fadaIn 0.8s ease-in-out forwards;
 }
 
-.panou-lateral.panou-stanga {
-  top: 15%;
-  left: 1.5%;
-  width: 5.5%;
-  height: 58%;
-  border: 2px solid rgba(0, 229, 255, 0.6);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.2);
-  background: rgba(10, 15, 25, 0.3);
-  backdrop-filter: blur(2px);
-}
-
 .panou-lateral.panou-dreapta {
   top: 32%;
   right: 1.5%;
   width: 5.5%;
   height: 42%;
-  border: 2px solid rgba(180, 70, 255, 0.6);
-  box-shadow: 0 0 20px rgba(180, 70, 255, 0.4), inset 0 0 15px rgba(180, 70, 255, 0.2);
   background: rgba(10, 15, 25, 0.3);
   backdrop-filter: blur(2px);
 }
@@ -173,8 +160,7 @@
 
 .panou-card {
   position: absolute;
-  background: rgba(18, 24, 38, 0.85);
-  border: 1px solid rgba(255, 75, 75, 0.6);
+  background: transparent;
   border-radius: 10px;
   color: #ffffff;
   font-family: 'FontDialog', sans-serif;
@@ -183,16 +169,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 15px rgba(255, 75, 75, 0.25), inset 0 0 10px rgba(255, 75, 75, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease;
   animation: fadaIn 0.8s ease-in-out forwards;
 }
 
 .panou-card:hover {
   transform: scale(1.05) translateY(-3px);
-  border-color: rgba(255, 120, 120, 0.9);
-  box-shadow: 0 0 25px rgba(255, 75, 75, 0.5), inset 0 0 15px rgba(255, 75, 75, 0.3);
 }
 
 .panou-sus-centru { top: 18%; left: 46.5%; width: 90px; height: 65px; }
@@ -234,14 +216,12 @@
   cursor: pointer;
   font-family: sans-serif;
   font-weight: bold;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
   pointer-events: auto;
 }
 
 .buton-comutator-lumina:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
 }
 
 .cursor-lumina {
@@ -262,14 +242,11 @@
 .modul-poza-jos {
   position: absolute;
   border-radius: 8px;
-  overflow: hidden; 
-  border: 2px solid rgba(0, 229, 255, 0.4);
-  background: rgba(10, 15, 25, 0.9);
+  background: transparent;
   cursor: pointer;
   pointer-events: auto;
   z-index: 15;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .modul-poza-jos img {
@@ -277,7 +254,8 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: brightness(0.5); /* Când nu sunt selectate sunt mai întunecate */
+  border-radius: 8px;
+  filter: brightness(0.5); 
   transition: filter 0.4s ease;
 }
 
@@ -298,11 +276,6 @@
   z-index: 20;
 }
 
-/* 
-  POZIȚIILE TALE ORIGINALE
-  Aici folosim variabile CSS native pentru a păstra rotația
-  când nu sunt active. 
-*/
 .modul-stanga-jos { 
   bottom: 3%; left: 10%; width: 120px; height: 85px; 
   --rotatie-baza: rotate(-6deg) rotateX(15deg);
@@ -319,22 +292,14 @@
   transform: var(--rotatie-baza);
 }
 
-/* 
-  --- STAREA CÂND POZA ESTE ACTIVĂ DIN SĂGEȚI --- 
-  Suprascriem TOT transform-ul, eliminând var(--rotatie-baza) și punând scale.
-*/
 .modul-poza-jos.poza-activa {
-  border-color: #00e5ff;
-  box-shadow: 0 0 30px rgba(0, 229, 255, 0.9);
   z-index: 100;
-  /* Asta e magia: Resetăm rotația și o mărim la 1.4, ridicând-o 20px */
   transform: scale(1.4) translateY(-20px) !important;
 }
 
 .modul-poza-jos.poza-activa img { 
-  filter: brightness(1); /* Poza selectată se luminează complet */
+  filter: brightness(1); 
 }
-
 
 /* =========================================
    STILUL PENTRU MASĂ (Modulul 8)
@@ -345,11 +310,9 @@
   width: 110px;
   height: 78px;
   z-index: 10;
-  /* Masa are rotația ei fixă */
   transform: rotate(-3deg) rotateX(12deg) !important; 
 }
 
-/* Masa are imaginea mereu clară (nu e întunecată de regulile generale) */
 .modul-stanga-centru-jos img {
   filter: brightness(0.9);
 }
@@ -359,12 +322,8 @@
 }
 
 .modul-stanga-centru-jos:hover {
-  border-color: #ff4b4b; 
-  box-shadow: 0 0 20px rgba(255, 75, 75, 0.7);
-  /* Dacă vrei să se mărească puțin și masa la hover, adăugăm scale pe lângă rotație */
   transform: scale(1.1) rotate(-3deg) rotateX(12deg) !important;
 }
-
 
 /* SĂGEȚILE PENTRU NAVIGARE */
 .navigatie-poze-jos {
@@ -380,20 +339,18 @@
 
 .sageata-poza {
   background: rgba(18, 24, 38, 0.8);
-  border: 1px solid rgba(0, 229, 255, 0.5);
   color: #00e5ff;
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
+  border: none;
 }
 
 .sageata-poza:hover {
   background: rgba(0, 229, 255, 0.2);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
 }
-
 
 .galerie-fullscreen {
   position: fixed;
@@ -413,9 +370,7 @@
 .galerie-imagine {
   max-width: 80%;
   max-height: 80vh;
-  border: 3px solid #00e5ff;
   border-radius: 12px;
-  box-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
   object-fit: contain;
   animation: popIn 0.3s ease-out forwards;
 }
@@ -429,13 +384,12 @@
   color: #00e5ff;
   font-size: 4rem;
   cursor: pointer;
-  transition: transform 0.2s ease, text-shadow 0.2s ease;
+  transition: transform 0.2s ease;
   line-height: 1;
 }
 
 .buton-inchidere-galerie:hover {
   transform: scale(1.2);
-  text-shadow: 0 0 15px rgba(0, 229, 255, 0.8);
 }
 
 .sageata-galerie {
@@ -443,18 +397,17 @@
   top: 50%;
   transform: translateY(-50%);
   background: rgba(18, 24, 38, 0.8);
-  border: 2px solid rgba(0, 229, 255, 0.5);
   color: #00e5ff;
   padding: 15px 25px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 24px;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease;
+  border: none;
 }
 
 .sageata-galerie:hover {
   background: rgba(0, 229, 255, 0.3);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
 }
 
 .sageata-galerie.stanga { left: 5%; }
@@ -464,7 +417,6 @@
   0% { transform: scale(0.9); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
-
 
 .panou-dreapta.panou-input-multiplu {
   position: absolute !important;
@@ -488,7 +440,6 @@
   margin-bottom: 15px;
   font-size: 1.2rem;
   color: #d783ff; 
-  text-shadow: 0 0 8px rgba(176, 38, 255, 0.8);
   letter-spacing: 1px;
 }
 
@@ -527,7 +478,6 @@
 
 .formular-kirchhoff input:focus {
   border-color: #e0a3ff;
-  box-shadow: 0 0 12px rgba(176, 38, 255, 0.6);
   background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -541,12 +491,11 @@
   letter-spacing: 1px;
   cursor: pointer;
   text-transform: uppercase;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .formular-kirchhoff button:hover {
   background-color: rgba(176, 38, 255, 0.4);
-  box-shadow: 0 0 15px rgba(176, 38, 255, 0.8);
   transform: scale(1.05);
 }
 
@@ -555,7 +504,6 @@
   font-size: 0.85rem;
   margin: 0;
   font-weight: bold;
-  text-shadow: 0 0 8px rgba(255, 77, 77, 0.8);
   animation: shake 0.4s ease-in-out; 
 }
 
@@ -564,21 +512,13 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  color: #4dff4d; /* Verde neon */
-  text-shadow: 0 0 10px rgba(77, 255, 77, 0.8);
+  color: #4dff4d; 
   font-weight: bold;
   font-size: 1.1rem;
 }
 
-
-.modul-poza-jos.modul-verde {
-  border-color: #4dff4d !important;
-  box-shadow: 0 0 15px rgba(77, 255, 77, 0.6) !important;
-}
-
 .modul-poza-jos.modul-verde .tag-modul-jos {
   color: #4dff4d;
-  text-shadow: 0 0 5px rgba(77, 255, 77, 0.8);
 }
 
 @keyframes shake {
@@ -589,15 +529,12 @@
   100% { transform: translateX(0); }
 }
 
-
-
 .panou-input-multiplu {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 15px;
   overflow-y: auto;
-  
   position: relative; 
   z-index: 9999 !important; 
   pointer-events: auto !important; 
@@ -606,11 +543,9 @@
 .panou-input-multiplu h3 {
   text-align: center;
   color: #d783ff;
-  text-shadow: 0 0 8px rgba(176, 38, 255, 0.8);
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(176, 38, 255, 0.4);
   padding-bottom: 10px;
-
   font-size: 0.85rem !important;
   margin-bottom: 10px !important;
 }
@@ -627,15 +562,12 @@
   border: 1px solid rgba(176, 38, 255, 0.2);
   border-radius: 8px;
   padding: 10px;
-  transition: all 0.3s ease;
 }
 
 .mini-form-container h4 {
   margin: 0 0 8px 0;
   color: #ccc;
-  font-size: 0.9rem;
   text-align: left;
-
   font-size: 0.8rem !important;
 }
 
@@ -657,7 +589,6 @@
   border-radius: 4px;
   color: #fff;
   outline: none;
-  
   pointer-events: auto !important; 
   user-select: text !important; 
   padding: 4px 6px !important;
@@ -666,7 +597,6 @@
 
 .input-grup-orizontal input:focus {
   border-color: #e0a3ff;
-  box-shadow: 0 0 8px rgba(176, 38, 255, 0.6);
 }
 
 .input-grup-orizontal button {
@@ -676,8 +606,6 @@
   border-radius: 4px;
   color: white;
   cursor: pointer;
-  transition: all 0.2s;
-  
   pointer-events: auto !important; 
   z-index: 10000;
   padding: 4px 8px !important;
@@ -699,7 +627,6 @@
   color: #4dff4d;
   font-size: 0.9rem;
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(77, 255, 77, 0.5);
 }
 
 .status-final-curent {
@@ -707,13 +634,6 @@
   text-align: center;
   color: #4dff4d;
   font-weight: bold;
-  animation: pulse-verde 2s infinite;
-}
-
-@keyframes pulse-verde {
-  0% { text-shadow: 0 0 5px rgba(77, 255, 77, 0.5); }
-  50% { text-shadow: 0 0 15px rgba(77, 255, 77, 1); }
-  100% { text-shadow: 0 0 5px rgba(77, 255, 77, 0.5); }
 }
 
 .container-progres-global {
@@ -728,7 +648,6 @@
   border-radius: 8px;
   padding: 8px 12px;
   z-index: 9998;
-  box-shadow: 0 0 12px rgba(176, 38, 255, 0.3);
   pointer-events: none;
 }
 
@@ -739,7 +658,6 @@
   font-size: 0.75rem;
   font-weight: bold;
   margin-bottom: 5px;
-  text-shadow: 0 0 5px rgba(176, 38, 255, 0.5);
 }
 
 .baral-progres-fundal {
@@ -755,7 +673,6 @@
   background: linear-gradient(90deg, #b026ff, #4dff4d);
   border-radius: 3px;
   transition: width 0.4s ease-in-out;
-  box-shadow: 0 0 8px rgba(77, 255, 77, 0.8);
 }
 
 .buton-plutitor-carnet {
@@ -767,17 +684,193 @@
   
   background: rgba(0, 0, 0, 0.8) !important;
   border: 1px solid #b026ff !important;
-  color: #d783ff !important;
+  color: #d783ff !important;/* Overlay-ul general */
+.terminal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 999999;
+}
+
+/* Baza mașinii de scris */
+.typewriter-container {
+  width: 850px;
+  max-width: 95%;
+  background: #1f1f1f;
+  border-radius: 8px;
+  color: #d1d5db;
+  font-family: 'Courier New', Courier, monospace;
+  position: relative;
+  pointer-events: auto;
+}
+
+.typewriter-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 10;
+}
+.typewriter-close-btn:hover { color: #ff4d4d; }
+
+/* Antetul */
+.typewriter-header {
+  padding: 20px 30px;
+  background: #111;
+  border-radius: 8px 8px 0 0;
+}
+.typewriter-header h2 {
+  color: #facc15;
+  margin: 0 0 10px 0;
+  font-size: 1.4rem;
+}
+.typewriter-header p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+/* Toolbar-ul */
+.typewriter-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px 30px;
+  background: #222;
+}
+
+.tool-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tool-group label {
+  font-size: 0.8rem;
+  color: #a3a3a3;
+  font-weight: bold;
+}
+
+.type-select {
+  background: #111;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  outline: none;
+}
+
+.type-align-group {
+  display: flex;
+  background: #111;
+  border: 1px solid #4b5563;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.type-align-group button {
+  background: transparent;
+  color: #9ca3af;
+  border: none;
+  border-right: 1px solid #4b5563;
+  padding: 8px 16px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+}
+.type-align-group button:last-child { border-right: none; }
+.type-align-group button:hover { background: #333; color: #fff; }
+.type-align-group button.active {
+  background: #facc15;
+  color: #000;
+}
+
+/* Rola și foaia de hârtie */
+.paper-roller-bg {
+  background: #111;
+  padding: 30px 40px;
+  position: relative;
+}
+/* Cilindrul din spate */
+.paper-roller-bg::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10px; right: 10px; height: 20px;
+  background: #333;
+}
+
+.paper-sheet {
+  background: #fdf6e3; /* Culoare de foaie veche/crem */
+  min-height: 200px;
+  padding: 30px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* Textul scris la mașină */
+.paper-text {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace; 
+  font-weight: bold;
+  line-height: 1.4;
+  transition: all 0.4s ease-in-out;
+}
+
+/* Footer-ul */
+.typewriter-footer {
+  padding: 25px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  border-radius: 0 0 8px 8px;
+}
+
+.btn-type-action {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 12px 25px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-type-action:hover {
+  background: #444;
+}
+
+.feedback-msg {
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: transparent;
+  padding: 8px 15px;
+}
+
+/* Ecranul de succes (când e deja rezolvat) */
+.typewriter-success-screen {
+  padding: 60px 40px;
+  text-align: center;
+  background: #111;
+  border-radius: 8px;
+}
+.success-title { color: #4dff4d; font-size: 2rem; margin-bottom: 10px; }
   padding: 6px 14px !important;
   border-radius: 6px !important;
   font-size: 0.85rem !important;
   font-weight: bold;
   cursor: pointer !important;
-  box-shadow: 0 0 10px rgba(176, 38, 255, 0.4);
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .buton-plutitor-carnet:hover {
   background: rgba(176, 38, 255, 0.2) !important;
-  box-shadow: 0 0 15px rgba(176, 38, 255, 0.8);
 }
