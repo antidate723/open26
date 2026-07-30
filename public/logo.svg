@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <filter id="glow-orange" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur1" />
+      <feGaussianBlur stdDeviation="15" result="blur2" />
+      <feGaussianBlur stdDeviation="35" result="blur3" />
+      <feMerge>
+        <feMergeNode in="blur3" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="glow-text" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <ellipse cx="400" cy="200" rx="300" ry="100" fill="#550a00" filter="url(#glow-orange)" opacity="0.8"/>
+  <ellipse cx="400" cy="200" rx="180" ry="40" fill="#ff3300" filter="url(#glow-orange)" opacity="0.9" />
+  <path d="M 150 200 L 350 190 L 400 185 L 450 195 L 650 200 L 450 205 L 400 215 L 350 210 Z" fill="#ffcc88" filter="url(#glow-orange)" />
+  <path d="M 0 0 L 0 120 L 50 30 L 110 150 L 180 20 L 260 170 L 340 40 L 420 160 L 490 50 L 570 180 L 640 60 L 720 140 L 800 30 L 800 0 Z" fill="#000000" />
+  <path d="M 0 400 L 0 280 L 60 360 L 140 250 L 220 370 L 300 260 L 380 380 L 450 240 L 530 360 L 610 270 L 690 350 L 760 280 L 800 370 L 800 400 Z" fill="#000000" />
+  <polygon points="250,190 270,185 260,210" fill="#000000" />
+  <polygon points="540,180 560,210 530,215" fill="#000000" />
+  <polygon points="370,175 390,165 400,185" fill="#000000" />
+  <polygon points="420,230 440,215 435,245" fill="#000000" />
+  <polygon points="310,210 330,230 305,225" fill="#000000" />
+  <text x="400" y="205" font-family="system-ui, -apple-system, sans-serif" font-size="85" font-weight="900" fill="#000000" stroke="#ff5500" stroke-width="3" text-anchor="middle" letter-spacing="14" filter="url(#glow-text)">BLACKOUT</text>
+  <text x="405" y="275" font-family="system-ui, -apple-system, sans-serif" font-size="35" font-weight="800" fill="#000000" stroke="#ff5500" stroke-width="2" text-anchor="middle" letter-spacing="24" filter="url(#glow-text)">ROOM</text>
+  <line x1="120" y1="165" x2="680" y2="165" stroke="#000000" stroke-width="4" />
+  <line x1="180" y1="190" x2="620" y2="190" stroke="#000000" stroke-width="2" />
+  <line x1="250" y1="245" x2="550" y2="245" stroke="#000000" stroke-width="3" />
+</svg>

@@ -62,9 +62,9 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   ];
 
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'poza-stiva-1', titlu: 'Circuit 1', imagine: '/bun.jpeg', raspunsCorect: '12' },
-    { id: 'm5', clasa: 'poza-stiva-2', titlu: 'Circuit 2', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
-    { id: 'm6', clasa: 'poza-stiva-3', titlu: 'Circuit 3', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
+    { id: 'm4', clasa: 'poza-stiva-1', titlu: 'Circuit 1', imagine: '/circuit1.png', raspunsCorect: '12' },
+    { id: 'm5', clasa: 'poza-stiva-2', titlu: 'Circuit 2', imagine: '/circuit2.png', raspunsCorect: '5' },
+    { id: 'm6', clasa: 'poza-stiva-3', titlu: 'Circuit 3', imagine: '/circuit3.png', raspunsCorect: '10' },
   ];
 
   const modulMasa = { id: 'm8', clasa: 'podea-stanga-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
@@ -240,166 +240,170 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   };
 
   if (!dialogCurent) return null;
-  const estePenultimulSauMaiDeparte = activeDialogId !== "intro_camera" || indexLinie >= dialogCurent.linii.length - 2;
+
+  // Aceasta este condiția principală: arătăm obiectele doar dacă NU suntem în intro, SAU dacă intro s-a terminat.
+  const arataElementeJoc = activeDialogId !== "intro_camera" || dialogTerminat;
   const procentProgres = Math.round((moduleRezolvate.length / TOTAL_PUZZLES) * 100);
 
   return (
     <div className="dialog-overlay">
+      
+      {/* 1. Licuricii și camera (fundalul) apar din prima */}
       <div className="licurici-container">
         {[...Array(20)].map((_, i) => (
           <div key={i} className="licurici"></div>
         ))}
       </div>
       
-      <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
-      
-      
-      <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <div style={{
-          background: 'rgba(15, 23, 42, 0.85)',
-          border: '1px solid #334155',
-          borderRadius: '8px',
-          padding: '6px 14px',
-          color: '#38bdf8',
-          fontFamily: 'monospace',
-          fontSize: '0.9rem',
-          fontWeight: 'bold',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-        }}>
-          <Clock size={16} /> Timp: {formateazaTimp(timpScurs)}
-        </div>
-      </div>
 
-      {estePenultimulSauMaiDeparte && (
-        <div className="fundal-efecte">
+      {/* 2. Tot restul interfeței și puzzle-urilor apare doar DUPĂ intro */}
+      {arataElementeJoc && (
+        <>
+          <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
           
-          <div className="container-progres-global">
-            <div className="info-progres-text">
-              <span>Progres Escape Room: {moduleRezolvate.length} / {TOTAL_PUZZLES} Module</span>
-              <span>{procentProgres}%</span>
-            </div>
-            <div className="baral-progres-fundal">
-              <div className="bara-progres-umpluta" style={{ width: `${procentProgres}%` }}></div>
+          <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1px solid #334155',
+              borderRadius: '8px',
+              padding: '6px 14px',
+              color: '#38bdf8',
+              fontFamily: 'monospace',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+            }}>
+              <Clock size={16} /> Timp: {formateazaTimp(timpScurs)}
             </div>
           </div>
 
-          <div className="bec-container">
-            <div className="fir-bec"></div>
-            <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
-          </div>
+          <div className="fundal-efecte">
+            
+            <div className="container-progres-global">
+              <div className="info-progres-text">
+                <span>Progres Escape Room: {moduleRezolvate.length} / {TOTAL_PUZZLES} Module</span>
+                <span>{procentProgres}%</span>
+              </div>
+              <div className="baral-progres-fundal">
+                <div className="bara-progres-umpluta" style={{ width: `${procentProgres}%` }}></div>
+              </div>
+            </div>
 
-          
-          <div className="sectiune-dreapta-sigurante">
-            <div className="panou-input-multiplu">
-              <h3>Tablou Siguranțe</h3>
-              <div className="lista-mini-formulare">
-                {moduleJosPoze.map((modul) => {
-                  const esteRezolvat = moduleRezolvate.includes(modul.id);
+            <div className="bec-container">
+              <div className="fir-bec"></div>
+              <div className={`bec-lumina bec-lumina-nivel-${nivelLumina}`}></div>
+            </div>
+
+            <div className="sectiune-dreapta-sigurante">
+              <div className="panou-input-multiplu">
+                <h3>Tablou Siguranțe</h3>
+                <div className="lista-mini-formulare">
+                  {moduleJosPoze.map((modul) => {
+                    const esteRezolvat = moduleRezolvate.includes(modul.id);
+                    return (
+                      <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
+                        {esteRezolvat ? (
+                          <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            Conectat <Check size={14} />
+                          </span>
+                        ) : (
+                          <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
+                            <div className="input-grup-orizontal">
+                              <input
+                                type="text"
+                                value={valoriInput[modul.id]}
+                                onChange={(e) => handleInputChange(modul.id, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                placeholder="ex: 10"
+                                autoComplete="off"
+                              />
+                              <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
+                            </div>
+                            {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
+                          </form>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {moduleRezolvate.length === TOTAL_PUZZLES && (
+                  <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
+                  </div>
+                )}
+              </div>
+
+              <div className="zona-circuite-dreapta">
+                {moduleJosPoze.map((modul, idx) => {
+                  const esteSelectat = idx === indexModulJos;
+                  const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
                   return (
-                    <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
-                      {esteRezolvat ? (
-                        <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          Conectat <Check size={14} />
-                        </span>
-                      ) : (
-                        <form onSubmit={(e) => verificaRaspunsMultiplu(e, modul.id, modul.raspunsCorect)} className="mini-form">
-                          <div className="input-grup-orizontal">
-                            <input
-                              type="text"
-                              value={valoriInput[modul.id]}
-                              onChange={(e) => handleInputChange(modul.id, e.target.value)}
-                              onClick={(e) => e.stopPropagation()}
-                              placeholder="ex: 10"
-                              autoComplete="off"
-                            />
-                            <button type="submit" onClick={(e) => e.stopPropagation()}>OK</button>
-                          </div>
-                          {erori[modul.id] && <span className="eroare-text-mic">{erori[modul.id]}</span>}
-                        </form>
-                      )}
+                    <div
+                      key={modul.id}
+                      className={`poza-circuit-stiva ${modul.clasa} ${esteSelectat ? 'poza-circuit-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
+                      onClick={(e) => {
+                        setIndexModulJos(idx);
+                        setCaruselDeschis(true);
+                        handlePanouClick(e, modul.id);
+                      }}
+                    >
+                      <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
+                      <div className="tag-circuit-mic" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        {modul.titlu} {esteDejaRezolvat && <Check size={12} />}
+                      </div>
                     </div>
                   );
                 })}
-              </div>
-              {moduleRezolvate.length === TOTAL_PUZZLES && (
-                <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                  Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
+                <div className="navigatie-circuite-dreapta" onClick={(e) => e.stopPropagation()}>
+                  <button className="sageata-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
+                  <button className="sageata-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
                 </div>
-              )}
+              </div>
             </div>
 
-            
-            <div className="zona-circuite-dreapta">
-              {moduleJosPoze.map((modul, idx) => {
-                const esteSelectat = idx === indexModulJos;
-                const esteDejaRezolvat = moduleRezolvate.includes(modul.id);
+            <div className="container-module-podea">
+              {panouriPodea.map((panou) => {
+                const esteRezolvatPanou = 
+                  (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
+                  (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
+                  (panou.id === 'sus-centru' && moduleRezolvate.includes('m1')); 
+                  
                 return (
                   <div
-                    key={modul.id}
-                    className={`poza-circuit-stiva ${modul.clasa} ${esteSelectat ? 'poza-circuit-activa' : ''} ${esteDejaRezolvat ? 'modul-verde' : ''}`}
-                    onClick={(e) => {
-                      setIndexModulJos(idx);
-                      setCaruselDeschis(true);
-                      handlePanouClick(e, modul.id);
-                    }}
+                    key={panou.id}
+                    className={`modul-podea ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
+                    onClick={(e) => handlePanouClick(e, panou.id)}
                   >
-                    <img src={modul.imagine} alt={modul.titlu} onError={(e) => console.error("Eroare poză", modul.imagine)} />
-                    <div className="tag-circuit-mic" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                      {modul.titlu} {esteDejaRezolvat && <Check size={12} />}
+                    <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
+                    <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                       {esteRezolvatPanou && <Check size={14} />}
                     </div>
                   </div>
                 );
               })}
-              <div className="navigatie-circuite-dreapta" onClick={(e) => e.stopPropagation()}>
-                <button className="sageata-poza" onClick={(e) => navigaPoze(-1, e)}>❮</button>
-                <button className="sageata-poza" onClick={(e) => navigaPoze(1, e)}>❯</button>
-              </div>
-            </div>
-          </div>
 
-          
-          <div className="container-module-podea">
-           
-          
-
-            {panouriPodea.map((panou) => {
-              const esteRezolvatPanou = 
-                (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
-                (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
-                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1')); 
-                
-              return (
-                <div
-                  key={panou.id}
-                  className={`modul-podea ${panou.clasa} ${esteRezolvatPanou ? 'modul-verde' : ''}`}
-                  onClick={(e) => handlePanouClick(e, panou.id)}
-                >
-                  <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
-                  <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
-                  </div>
+              <div
+                key={modulMasa.id}
+                className={`modul-podea ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
+                onClick={handleMasaClick}
+              >
+                <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
+                <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                  {moduleRezolvate.includes("m8") && <Check size={14} />}
                 </div>
-              );
-            })}
-
-            <div
-              key={modulMasa.id}
-              className={`modul-podea ${modulMasa.clasa} ${moduleRezolvate.includes("m8") ? "modul-verde" : ""}`}
-              onClick={handleMasaClick}
-            >
-              <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
-              <div className="tag-modul-podea" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                {modulMasa.titlu} {moduleRezolvate.includes("m8") && <Check size={14} />}
               </div>
             </div>
           </div>
-        </div>
+
+          <CarnetNotite />
+        </>
       )}
 
+      {/* 3. Dialogul inițial de la intrarea în cameră (vizibil până e terminat) */}
       {!dialogTerminat && (
         <div 
           className="dialog-box" 
@@ -417,8 +421,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
         </div>
       )}
 
-      <CarnetNotite />
-
+      {/* Modaluri secundare */}
       {caruselDeschis && (
         <div className="galerie-fullscreen" onClick={() => setCaruselDeschis(false)}>
           <button className="buton-inchidere-galerie" onClick={(e) => { e.stopPropagation(); setCaruselDeschis(false); }}>×</button>

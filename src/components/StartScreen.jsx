@@ -4,14 +4,7 @@ import "../components_css/StartScreen.css";
 function StartScreen({ onStart }) {
   return (
     <div className="start-container">
-      <motion.h1
-        className="start-title"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        CAMERA INTERZISĂ
-      </motion.h1>
+      <img src="/logo.svg" alt="logo" width={700}/>
 
       <motion.p
         className="start-text"
@@ -20,7 +13,7 @@ function StartScreen({ onStart }) {
         transition={{ duration: 1, delay: 0.5 }}
       >
         <br />
-        Bun venit! Aceasta este Camera Interzisa.
+        Trapped in the dark, you must use your knowledge to solve the room's puzzles, restore the power, and unlock your escape.
       </motion.p>
 
       <motion.button
@@ -32,7 +25,7 @@ function StartScreen({ onStart }) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        ÎNCEPE
+        START
       </motion.button>
     </div>
   );

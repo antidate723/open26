@@ -6,7 +6,6 @@ import dateDialoguri from '../texte/dialoguri.json';
 export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved }) {
   const [mode, setMode] = useState(isAlreadySolved ? 'puzzle' : 'dialog');
 
- 
   const liniiDialog = dateDialoguri.dialoguri["masina_scris"].linii;
   const titluDialog = dateDialoguri.dialoguri["masina_scris"].titlu;
   
@@ -33,12 +32,10 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
     }, 30);
 
     return () => clearInterval(interval);
-  }, [indexLinie, mode]);
+  }, [indexLinie, mode, liniiDialog]);
 
-  const actiuneDialog = (e) => {
-    e.stopPropagation();
+  const treciMaiDeparte = () => {
     if (isTyping) return; 
-    
     if (indexLinie < liniiDialog.length - 1) {
       setIndexLinie(prev => prev + 1);
     } else {
@@ -46,6 +43,22 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
     }
   };
 
+  const actiuneDialogClick = (e) => {
+    e.stopPropagation();
+    treciMaiDeparte();
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (mode === 'dialog' && e.code === 'Space') {
+        e.preventDefault();
+        treciMaiDeparte();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, isTyping, indexLinie, liniiDialog]);
 
   const [culoare, setCuloare] = useState('black');
   const [aliniere, setAliniere] = useState('left');
@@ -69,14 +82,14 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
     <div className="terminal-overlay" onClick={mode === 'puzzle' ? onClose : undefined}>
       
       {mode === 'dialog' ? (
-        <div className="dialog-box" onClick={actiuneDialog} style={{ cursor: isTyping ? 'default' : 'pointer' }}>
+        <div className="dialog-box" onClick={actiuneDialogClick} style={{ cursor: isTyping ? 'default' : 'pointer' }}>
           <div className="dialog-name">{titluDialog}</div>
           <p className="dialog-text">
             {textAfisat}
             {!isTyping && <span className="cursor-blink">|</span>}
           </p>
           <div className="dialog-hint" style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}>
-            Click to continue ▼
+            Click or Press Space to continue ▼
           </div>
         </div>
       ) : (
@@ -97,7 +110,6 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 <p>TASK: Calibrate the machine to print the emergency log. (Requirements: <strong>24px, Red Ink, Centered</strong>)</p>
               </div>
 
-              
               <div className="typewriter-toolbar">
                 <div className="tool-group">
                   <label>INK RIBBON</label>
@@ -133,7 +145,6 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 </div>
               </div>
 
-              
               <div className="paper-roller-bg">
                 <div className="paper-sheet">
                   <p className="paper-text" style={{ color: culoare, textAlign: aliniere, fontSize: marime }}>
@@ -142,12 +153,11 @@ export default function MasinaScrisModal({ onClose, onSolved, isAlreadySolved })
                 </div>
               </div>
 
-            
               <div className="typewriter-footer">
                 <button className="btn-type-action" onClick={verificaFormatare}>
                   [ PULL CARRIAGE LEVER ]
                 </button>
-                <span className="feedback-msg" style={{ color: feedback.includes('✅') ? '#4dff4d' : '#ff4d4d' }}>
+                <span className="feedback-msg" style={{ color: feedback.includes('ACCEPTED') ? '#4dff4d' : '#ff4d4d' }}>
                   {feedback}
                 </span>
               </div>

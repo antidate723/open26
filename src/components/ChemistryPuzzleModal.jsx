@@ -13,28 +13,22 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
   const [vieti, setVieti] = useState(3);
 
   const [culoareAmestec, setCuloareAmestec] = useState('transparent');
-  const [mesajEroare, setMesajEroare] = useState("Alege prima substanță pentru a începe reacția.");
+  const [mesajEroare, setMesajEroare] = useState("Choose the first substance to start the reaction.");
 
   const eprubeteDisponibile = [
-    { id: 0, nume: 'Acid Sulfuric', formula: 'H₂SO₄', coef: '1', desc: 'Deshidratant puternic.', culoare: '#ff4757', hex: '#ff4757' },
-    { id: 1, nume: 'Nitroglicerină', formula: 'C₃H₅(NO₃)₃', coef: '3', desc: 'Compus instabil și reactiv.', culoare: '#ffa502', hex: '#ffa502' },
-    { id: 2, nume: 'Stabilizator', formula: 'C₆H₁₂O₆', coef: '2', desc: 'Moleculă tampon de control.', culoare: '#2ed573', hex: '#2ed573' },
-    { id: 3, nume: 'Catalizator', formula: 'Pt/Rh', coef: '4', desc: 'Declanșează scânteia finală.', culoare: '#9b59b6', hex: '#9b59b6' },
-    { id: 4, nume: 'Apă Distilată', formula: 'H₂O', coef: '0', desc: 'Hazard! Stinge total amestecul.', culoare: '#3b82f6', hex: '#3b82f6' },
+    { id: 0, nume: 'Sulfuric Acid', formula: 'H₂SO₄', coef: '1', desc: 'Strong desiccant.', culoare: '#ff4757', hex: '#ff4757' },
+    { id: 1, nume: 'Nitroglycerin', formula: 'C₃H₅(NO₃)₃', coef: '3', desc: 'Unstable and reactive compound.', culoare: '#ffa502', hex: '#ffa502' },
+    { id: 2, nume: 'Stabilizer', formula: 'C₆H₁₂O₆', coef: '2', desc: 'Control buffer molecule.', culoare: '#2ed573', hex: '#2ed573' },
+    { id: 3, nume: 'Catalyst', formula: 'Pt/Rh', coef: '4', desc: 'Triggers the final spark.', culoare: '#9b59b6', hex: '#9b59b6' },
+    { id: 4, nume: 'Distilled Water', formula: 'H₂O', coef: '0', desc: 'Hazard! Completely extinguishes the mixture.', culoare: '#3b82f6', hex: '#3b82f6' },
   ];
 
-  const dialogData = dateDialoguri.dialoguri["modul_chimie"] || {
-    titlu: "Laborator Central - Unitatea de Detonație",
-    linii: [
-      "Sistemul de securitate al ușii este blindat cu un aliaj greu...",
-      "Privesc panoul principal: am nevoie de o reacție chimică în lanț.",
-      "O singură eroare în dozaj și tot laboratorul sare în aer. Să fim precisi!"
-    ]
-  };
+  const dialogData = dateDialoguri.dialoguri["obiect_chimie"];
 
   const [indexLinie, setIndexLinie] = useState(0);
   const [textAfisat, setTextAfisat] = useState("");
   const [isTyping, setIsTyping] = useState(true);
+
 
   useEffect(() => {
     if (mode !== 'dialog') return;
@@ -56,8 +50,8 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
     return () => clearInterval(interval);
   }, [indexLinie, mode, dialogData]);
 
-  const actiuneDialog = (e) => {
-    e.stopPropagation();
+
+  const treciMaiDeparte = () => {
     if (isTyping) return;
     if (indexLinie < dialogData.linii.length - 1) {
       setIndexLinie(prev => prev + 1);
@@ -65,6 +59,25 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
       setMode('puzzle');
     }
   };
+
+  // Handler pentru click
+  const actiuneDialogClick = (e) => {
+    e.stopPropagation();
+    treciMaiDeparte();
+  };
+
+  // Efect pentru a asculta tasta Space
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (mode === 'dialog' && e.code === 'Space') {
+        e.preventDefault(); // Previne scroll-ul paginii
+        treciMaiDeparte();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, isTyping, indexLinie, dialogData]);
 
   const adaugaEprubeta = (eprubeta) => {
     if (stareMinigame === 'detonat' || stareMinigame === 'gresit' || vieti <= 0) return;
@@ -79,20 +92,20 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
       setCuloareAmestec('#ef4444');
 
       if (eprubeta.id === 4) {
-        setMesajEroare("💥 Paharul s-a spart! Ai adăugat Apă Distilată și ai stins reacția chimică!");
+        setMesajEroare(" The beaker broke! You added Distilled Water and stopped the chemical reaction!");
       } else if (pasCurentIndex === 0) {
-        setMesajEroare("💥 Paharul s-a fisurat! Acidul Sulfuric trebuia pus primul pentru a amorsa baza.");
+        setMesajEroare(" The beaker cracked! Sulfuric Acid should be added first to prime the base.");
       } else if (pasCurentIndex === 1) {
-        setMesajEroare("💥 Eșec! După acid era nevoie de Stabilizator Organic, nu de această substanță.");
+        setMesajEroare(" Failure! After the acid, you needed the Stabilizer, not this substance.");
       } else {
-        setMesajEroare("💥 Paharul a cedat! Ordinea reactanților este incorectă pentru detonație.");
+        setMesajEroare(" The beaker collapsed! The order of reactants is incorrect for detonation.");
       }
 
       setTimeout(() => {
         setSecventaUser([]);
         setStareMinigame('asteptare');
         setCuloareAmestec('transparent');
-        setMesajEroare(vietiNoi <= 0 ? "Ai rămas fără vieți! Se resetează laboratorul..." : "Alege prima substanță pentru a începe reacția.");
+        setMesajEroare(vietiNoi <= 0 ? "You ran out of lives! Resetting the laboratory..." : "Choose the first substance to start the reaction.");
         if (vietiNoi <= 0) setVieti(3);
       }, 1800);
       return;
@@ -103,16 +116,16 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
     setCuloareAmestec(eprubeta.hex);
 
     if (nouaSecventa.length === 1) {
-      setMesajEroare("Bun! Acidul a amorsat baza. Continuă cu stabilizatorul.");
+      setMesajEroare("Good! The acid has primed the base. Continue with the stabilizer.");
     } else if (nouaSecventa.length === 2) {
-      setMesajEroare("Stabilizator integrat corect. Adaugă compusul instabil.");
+      setMesajEroare("Stabilizer integrated correctly. Add the unstable compound.");
     } else if (nouaSecventa.length === 3) {
-      setMesajEroare("Aproape gata! Mai ai nevoie doar de scânteia catalizatorului.");
+      setMesajEroare("Almost done! You only need the catalyst spark.");
     }
 
     if (nouaSecventa.length === secventaCorecta.length) {
       setStareMinigame('detonat');
-      setMesajEroare("🔥 Reacție în lanț reușită! Ușa a fost spulberată cu succes!");
+      setMesajEroare(" Chain reaction successful! The door has been blown open!");
       setTimeout(() => {
         onSolved();
       }, 2000);
@@ -130,12 +143,12 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
   );
 
   const genereazaEcuatieLive = () => {
-    if (secventaUser.length === 0) return "Reacție: [ Așteptare reactanți... ]";
+    if (secventaUser.length === 0) return "Reaction: [ Waiting for reactants... ]";
     const elemente = secventaUser.map(id => {
       const sub = eprubeteDisponibile[id];
       return `${sub.coef}${sub.formula}`;
     });
-    return `Ecuație Activă: ${elemente.join(' + ')} ➔ [ Stare: În curs... ]`;
+    return `Active Equation: ${elemente.join(' + ')} ➔ [ Status: In progress... ]`;
   };
 
   return (
@@ -143,7 +156,7 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
       {mode === 'dialog' ? (
         <div
           className="dialog-box"
-          onClick={actiuneDialog}
+          onClick={actiuneDialogClick}
           style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
           <div className="dialog-name">
@@ -154,7 +167,7 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
             {!isTyping && <span className="cursor-blink">|</span>}
           </p>
           <div className="dialog-hint" style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}>
-            Click sau Apasă Space pentru a continua ▼
+            Click or Press Space to continue ▼
           </div>
         </div>
       ) : (
@@ -162,7 +175,7 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
           <button className="chem-close-btn" onClick={onClose}>×</button>
 
           <div className="chem-header">
-            <h2 className="chem-title">&gt; Laborator_Chimic_Statia_De_Detonatie</h2>
+            <h2 className="chem-title">&gt; Chemical_Lab_Detonation_Station</h2>
             <div className="chem-hearts">
               {[1, 2, 3].map((inima) => (
                 <span key={inima} className={`chem-heart ${inima <= vieti ? 'filled' : ''}`}>♥</span>
@@ -188,7 +201,7 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
                 )}
               </div>
             </div>
-            <span className="chem-beaker-label">Paharul Berzelius</span>
+            <span className="chem-beaker-label">Beaker</span>
           </div>
 
           <div className="chem-equation">
@@ -196,7 +209,7 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
           </div>
 
           <p className="chem-hint">
-            Alege eprubetele în ordinea corectă pentru a sparge ușa:
+            Choose the test tubes in the correct order to break the door:
           </p>
 
           <div className="chem-grid">
@@ -217,11 +230,11 @@ export default function ChemistryPuzzleModal({ onClose, onSolved }) {
 
           <div className="chem-status">
             {stareMinigame === 'detonat' && (
-              <span className="chem-status-success">🔥 SUCCES TOTAL! Ușa a fost deblocată cu succes!</span>
+              <span className="chem-status-success"> TOTAL SUCCESS! The door has been successfully unlocked!</span>
             )}
             {stareMinigame === 'asteptare' && (
               <div className="chem-progress">
-                <span className="chem-progress-label">Progres:</span>
+                <span className="chem-progress-label">Progress:</span>
                 {secventaCorecta.map((_, idx) => (
                   <div key={idx} className={`chem-progress-dot ${idx < secventaUser.length ? 'done' : ''}`}>
                     {idx < secventaUser.length ? '✓' : idx + 1}

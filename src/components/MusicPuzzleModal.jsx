@@ -18,17 +18,17 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
   const [clapaAnimata, setClapaAnimata] = useState(null);
 
   const clape = [
-    { id: 0, nume: 'Clapa 1', sunet: '/clapa1.mp3' },
-    { id: 1, nume: 'Clapa 2', sunet: '/clapa2.mp3' },
-    { id: 2, nume: 'Clapa 3', sunet: '/clapa3.mp3' },
+    { id: 0, nume: 'Key 1', sunet: '/clapa1.mp3' },
+    { id: 1, nume: 'Key 2', sunet: '/clapa2.mp3' },
+    { id: 2, nume: 'Key 3', sunet: '/clapa3.mp3' },
   ];
 
   const dialogData = dateDialoguri.dialoguri["modul_muzica"] || {
-    titlu: "Sistem Acustic",
+    titlu: "Acoustic System",
     linii: [
-      "O frecvență ciudată începe să pulseze în pereți...",
-      "Aflu un ritm ascuns în ecourile încăperii.",
-      "Trebuie să potrivesc semnalele audio în ordinea corectă!"
+      "A strange frequency begins to pulse through the walls...",
+      "I hear a hidden rhythm in the room's echoes.",
+      "I need to match the audio signals in the correct order!"
     ]
   };
 
@@ -64,6 +64,7 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
     }
   };
 
+  // Efect pentru scrierea textului (Typewriter)
   useEffect(() => {
     if (mode !== 'dialog') return;
 
@@ -85,16 +86,34 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
     return () => clearInterval(interval);
   }, [indexLinie, mode, dialogData]);
 
-  const actiuneDialog = (e) => {
-    e.stopPropagation();
+  // Funcția comună pentru a trece la următoarea linie de dialog
+  const treciMaiDeparte = () => {
     if (isTyping) return;
-
     if (indexLinie < dialogData.linii.length - 1) {
       setIndexLinie(prev => prev + 1);
     } else {
       setMode('puzzle');
     }
   };
+
+  // Handler pentru click manual pe dialog
+  const actiuneDialogClick = (e) => {
+    e.stopPropagation();
+    treciMaiDeparte();
+  };
+
+  // Efect pentru a asculta tasta Space
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (mode === 'dialog' && e.code === 'Space') {
+        e.preventDefault(); // Previne scroll-ul accidental
+        treciMaiDeparte();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, isTyping, indexLinie, dialogData]);
 
   const apasaClapa = (clapa) => {
     if (stareMinigame === 'corect') return;
@@ -141,7 +160,7 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
       {mode === 'dialog' ? (
         <div
           className="dialog-box"
-          onClick={actiuneDialog}
+          onClick={actiuneDialogClick}
           style={{ cursor: isTyping ? 'default' : 'pointer' }}
         >
           <div className="dialog-name">
@@ -152,13 +171,13 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
             {!isTyping && <span className="cursor-blink">|</span>}
           </p>
           <div className="dialog-hint" style={{ opacity: isTyping ? 0 : 1, transition: 'opacity 0.3s' }}>
-            Click sau Apasă Space pentru a continua ▼
+            Click or Press Space to continue ▼
           </div>
         </div>
       ) : (
         <div className="terminal-modal-box" onClick={(e) => e.stopPropagation()}>
           <button className="terminal-close-btn" onClick={onClose}>×</button>
-          <h2 className="terminal-title">&gt; Calibrare_Frecventa_Audio</h2>
+          <h2 className="terminal-title">&gt; Audio_Frequency_Calibration</h2>
 
           <div className="terminal-hearts">
             {Array.from({ length: maxInimi }).map((_, i) => (
@@ -167,12 +186,12 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
           </div>
 
           <div className="terminal-panel">
-            <p className="terminal-panel-label">Ascultă fragmentul acustic de referință:</p>
+            <p className="terminal-panel-label">Listen to the reference acoustic fragment:</p>
             <button
               className={`terminal-btn ${isPlayingMini ? 'playing' : ''}`}
               onClick={toggleAudioMini}
             >
-              {isPlayingMini ? '[ Opreste ]' : '[ Asculta Melodia (4s) ]'}
+              {isPlayingMini ? '[ Stop ]' : '[ Listen to the Melody (4s) ]'}
             </button>
           </div>
 
@@ -190,10 +209,10 @@ export default function MusicPuzzleModal({ onClose, onSolved, onPenalty }) {
           </div>
 
           <div className="terminal-status">
-            {stareMinigame === 'gresit' && <span className="wrong">Secventa gresita. Se reseteaza.</span>}
-            {stareMinigame === 'corect' && <span className="correct">Frecventa sincronizata cu succes.</span>}
+            {stareMinigame === 'gresit' && <span className="wrong">Wrong sequence. Resetting.</span>}
+            {stareMinigame === 'corect' && <span className="correct">Frequency successfully synchronized.</span>}
             {stareMinigame === 'asteptare' && (
-              <span className="waiting">Progres: {secventaUser.length} / {secventaCorecta.length} pasi</span>
+              <span className="waiting">Progress: {secventaUser.length} / {secventaCorecta.length} steps</span>
             )}
           </div>
         </div>

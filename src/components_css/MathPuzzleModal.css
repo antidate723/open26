@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
 .math-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
@@ -12,78 +14,117 @@
   z-index: 999999;
 }
 
-.math-modal-box {
-  background: rgba(18, 24, 38, 0.95);
-  border: 2px solid rgba(0, 229, 255, 0.6);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-  border-radius: 12px;
-  padding: 30px;
-  width: 400px;
+/* Stilul de "Foaie Veche" */
+.math-paper-box {
+  background-color: #f4e8c1;
+  background-image: radial-gradient(#d4c49d 15%, transparent 16%), radial-gradient(#d4c49d 15%, transparent 16%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  box-shadow: 
+    0 4px 6px rgba(0,0,0,0.3), 
+    inset 0 0 40px rgba(139, 115, 85, 0.4),
+    2px 5px 15px rgba(0,0,0,0.5);
+  border-radius: 4px 15px 4px 20px;
+  padding: 40px 30px;
+  width: 420px;
   max-width: 90%;
   position: relative;
-  color: white;
-  text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c1a0e;
+  font-family: 'Caveat', cursive, sans-serif;
   pointer-events: auto;
+  transform: rotate(-2deg); /* Foaia stă un pic strâmb */
 }
 
-.math-title {
-  color: #00e5ff;
+/* Efect de foaie ruptă/veche la margini */
+.math-paper-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.math-paper-content {
+  transform: rotate(2deg); /* Îndreptăm textul față de foaie */
+  text-align: center;
+}
+
+.math-title-handwritten {
+  color: #3b2516;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  font-size: 2.2rem;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(59, 37, 22, 0.3);
+  display: inline-block;
+  padding-bottom: 5px;
 }
 
-.math-subtitle {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
+.math-subtitle-ink {
+  color: #5c4331;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
 }
 
-.math-puzzle-text {
-  font-size: 1.5rem;
-  font-weight: bold;
+.math-puzzle-text-ink {
+  font-size: 2.2rem;
+  font-weight: 700;
   letter-spacing: 2px;
-  margin-bottom: 20px;
-  color: #fffbcf;
-  text-shadow: 0 0 10px #ffea79;
+  margin-bottom: 30px;
+  color: #1a100a;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 10px;
+  border-radius: 4px;
 }
 
-.math-form {
+.math-form-ink {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
 }
 
-.math-input {
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid #b026ff;
-  border-radius: 6px;
-  color: white;
-  font-size: 1.1rem;
+.math-input-ink {
+  padding: 8px 15px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed #5c4331;
+  color: #1a100a;
+  font-size: 1.8rem;
+  font-family: 'Caveat', cursive, sans-serif;
   text-align: center;
   outline: none;
+  width: 60%;
 }
 
-.math-input:focus {
-  border-color: #e0a3ff;
-  box-shadow: 0 0 12px rgba(176, 38, 255, 0.6);
+.math-input-ink::placeholder {
+  color: rgba(92, 67, 49, 0.4);
 }
 
-.math-submit-btn, .math-btn-ok {
-  padding: 10px;
-  background: rgba(0, 229, 255, 0.2);
-  border: 1px solid #00e5ff;
-  border-radius: 6px;
-  color: white;
+.math-input-ink:focus {
+  border-bottom: 2px solid #1a100a;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.math-submit-btn-ink, .math-btn-ink {
+  padding: 8px 25px;
+  background: transparent;
+  border: 2px solid #5c4331;
+  border-radius: 8px;
+  color: #3b2516;
+  font-size: 1.4rem;
+  font-family: 'Caveat', cursive, sans-serif;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 2px 2px 0px rgba(92, 67, 49, 0.2);
 }
 
-.math-submit-btn:hover, .math-btn-ok:hover {
-  background: rgba(0, 229, 255, 0.4);
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+.math-submit-btn-ink:hover, .math-btn-ink:hover {
+  background: rgba(92, 67, 49, 0.1);
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0px rgba(92, 67, 49, 0.2);
 }
 
 .math-close-btn {
@@ -92,22 +133,40 @@
   right: 15px;
   background: transparent;
   border: none;
-  color: #00e5ff;
-  font-size: 1.5rem;
+  color: #5c4331;
+  font-size: 2rem;
+  font-family: sans-serif;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
-.math-error {
-  color: #ff4d4d;
+.math-close-btn:hover {
+  color: #b30000;
+}
+
+.math-error-ink {
+  color: #b30000;
   margin-top: 15px;
   font-weight: bold;
+  font-size: 1.4rem;
   animation: shake 0.4s ease-in-out;
 }
 
-.math-success {
-  color: #4dff4d;
+.math-success-ink {
+  color: #2e6b2e;
   font-weight: bold;
-  font-size: 1.2rem;
-  margin-top: 20px;
-  text-shadow: 0 0 10px rgba(77, 255, 77, 0.5);
+  font-size: 1.8rem;
+  margin-top: 30px;
+}
+
+.math-success-ink p {
+  margin-bottom: 20px;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
 }
