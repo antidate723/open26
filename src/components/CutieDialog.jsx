@@ -9,7 +9,7 @@ import MasinaScrisModal from './MasinaScrisModal';
 import CarnetNotite from './CarnetNotite'; 
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 5; 
+const TOTAL_PUZZLES = 6; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -47,13 +47,13 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const panouriSus = [
     { id: 'sus-centru', clasa: 'panou-sus-centru', titlu: 'Modul 1', imagine: '/modul1.png' },
     { id: 'stanga-sus', clasa: 'panou-stanga-sus', titlu: 'Modul 2', imagine: '/typewriter.png' },
-    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pick-up.png' },
+    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pickup.png' },
   ];
 
   const moduleJosPoze = [
-    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Modul 4', imagine: '/bun.jpeg', raspunsCorect: '12' },
-    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Modul 5', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
-    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Modul 6', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
+    { id: 'm4', clasa: 'modul-stanga-jos', titlu: 'Circuit 1', imagine: '/bun.jpeg', raspunsCorect: '12' },
+    { id: 'm5', clasa: 'modul-centru-jos-1', titlu: 'Circuit 2', imagine: '/nivel1.jpeg', raspunsCorect: '5' },
+    { id: 'm6', clasa: 'modul-centru-jos-2', titlu: 'Circuit 3', imagine: '/nivel2.jpeg', raspunsCorect: '10' },
   ];
 
   const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
@@ -208,6 +208,12 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   return (
     <div className="dialog-overlay">
+      <div className="licurici-container">
+        {[...Array(20)].map((_, i) => (
+          <div key={i} className="licurici"></div>
+        ))}
+      </div>
+      
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
@@ -240,7 +246,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
                 const esteRezolvat = moduleRezolvate.includes(modul.id);
                 return (
                   <div key={modul.id} className={`mini-form-container ${esteRezolvat ? 'rezolvat-box' : ''}`}>
-                    <h4>{modul.titlu}</h4>
+                    
                     {esteRezolvat ? (
                       <span className="status-verde-mic" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         Conectat <Check size={14} />
@@ -288,7 +294,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
                 >
                   <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
                   <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
+                    {esteRezolvatPanou && <Check size={14} />}
                   </div>
                 </div>
               );
@@ -323,7 +329,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
               <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                {modulMasa.titlu} {moduleRezolvate.includes("m8") && <Check size={14} />}
+                 {moduleRezolvate.includes("m8") && <Check size={14} />}
               </div>
             </div>
 
