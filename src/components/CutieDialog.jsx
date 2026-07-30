@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, Check, Zap } from 'lucide-react';
+import { Lightbulb, Check, Zap, Clock } from 'lucide-react';
 import dateDialoguri from '../texte/dialoguri.json';
 import '../components_css/CutieDialog.css';
 
 import MathPuzzleModal from './MathPuzzleModal';
 import MusicPuzzleModal from './MusicPuzzleModal';
 import MasinaScrisModal from './MasinaScrisModal';
+import ChemistryPuzzleModal from './ChemistryPuzzleModal';
 import CarnetNotite from './CarnetNotite'; 
 
 const TOTAL_MODULE_JOC = 10;
-const TOTAL_PUZZLES = 6; 
+const TOTAL_PUZZLES = 7; 
 
 export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePlatforma = 12 }) {
   const [indexLinie, setIndexLinie] = useState(0);
@@ -27,6 +28,16 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const [m8Stage, setM8Stage] = useState(0);
   const [musicModalOpen, setMusicModalOpen] = useState(false);
   const [modul2Open, setModul2Open] = useState(false);
+  const [chemistryModalOpen, setChemistryModalOpen] = useState(false); 
+
+  const [timpScurs, setTimpScurs] = useState(() => {
+    const timpSalvat = localStorage.getItem('infoMotion_timpScurs');
+    return timpSalvat ? parseInt(timpSalvat, 10) : 0;
+  });
+
+  const [jocTerminatTimp, setJocTerminatTimp] = useState(() => {
+    return localStorage.getItem('infoMotion_jocTerminatTimp') === 'true';
+  });
 
   const [moduleRezolvate, setModuleRezolvate] = useState(() => {
     const salvat = localStorage.getItem('infoMotion_rezolvate');
@@ -47,7 +58,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const panouriSus = [
     { id: 'sus-centru', clasa: 'panou-sus-centru', titlu: 'Modul 1', imagine: '/modul1.png' },
     { id: 'stanga-sus', clasa: 'panou-stanga-sus', titlu: 'Modul 2', imagine: '/typewriter.png' },
-    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pickup.png' },
+    { id: 'dreapta-sus', clasa: 'panou-dreapta-sus', titlu: 'Modul 3', imagine: '/pick-up.png' },
   ];
 
   const moduleJosPoze = [
@@ -59,6 +70,26 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
   const modulMasa = { id: 'm8', clasa: 'modul-stanga-centru-jos', titlu: 'Modulul 8', imagine: '/masabtn.png' };
 
   useEffect(() => {
+    if (jocTerminatTimp || moduleRezolvate.length === TOTAL_PUZZLES) return;
+
+    const timer = setInterval(() => {
+      setTimpScurs(prev => {
+        const nouTimp = prev + 1;
+        localStorage.setItem('infoMotion_timpScurs', nouTimp.toString());
+        return nouTimp;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [jocTerminatTimp, moduleRezolvate.length]);
+
+  const formateazaTimp = (secundeTotale) => {
+    const minute = Math.floor(secundeTotale / 60);
+    const secunde = secundeTotale % 60;
+    return `${minute.toString().padStart(2, '0')}:${secunde.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
     const rezolvateSursa = JSON.parse(localStorage.getItem('infoMotion_rezolvate') || '[]');
     const deLaSigurante = rezolvateSursa.filter(id => ['m4', 'm5', 'm6'].includes(id)).length;
     setNivelLumina(deLaSigurante);
@@ -66,7 +97,11 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
 
   useEffect(() => {
     localStorage.setItem('infoMotion_rezolvate', JSON.stringify(moduleRezolvate));
-  }, [moduleRezolvate]);
+    if (moduleRezolvate.length === TOTAL_PUZZLES && !jocTerminatTimp) {
+      setJocTerminatTimp(true);
+      localStorage.setItem('infoMotion_jocTerminatTimp', 'true');
+    }
+  }, [moduleRezolvate, jocTerminatTimp]);
 
   useEffect(() => {
     localStorage.setItem('infoMotion_moduleGlobalRezolvate', JSON.stringify(moduleGlobalRezolvate));
@@ -192,6 +227,8 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       setMusicModalOpen(true);
     } else if (panouId === 'stanga-sus') {
       setModul2Open(true);
+    } else if (panouId === 'sus-centru') {
+      setChemistryModalOpen(true); 
     } else {
       console.log(`Ai apăsat pe panoul: ${panouId}`);
     }
@@ -217,9 +254,28 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
       <div className="cursor-lumina" style={{ left: `${mousePos.x}px`, top: `${mousePos.y}px` }}></div>
       <div className={`overlay-intuneric lumina-nivel-${nivelLumina}`}></div>
       
-      <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
-      </button>
+      <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 100, display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <button className="buton-comutator-lumina" onClick={SchimbaLumina} style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+          <Lightbulb size={16} /> Lumina: {nivelLumina === 0 ? 'Off (Glow)' : nivelLumina === 1 ? '33%' : nivelLumina === 2 ? '66%' : '100%'}
+        </button>
+
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.85)',
+          border: '1px solid #334155',
+          borderRadius: '8px',
+          padding: '6px 14px',
+          color: '#38bdf8',
+          fontFamily: 'monospace',
+          fontSize: '0.9rem',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+        }}>
+          <Clock size={16} /> Timp: {formateazaTimp(timpScurs)}
+        </div>
+      </div>
 
       {estePenultimulSauMaiDeparte && (
         <div className="fundal-efecte">
@@ -273,7 +329,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             </div>
             {moduleRezolvate.length === TOTAL_PUZZLES && (
               <div className="status-final-curent" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                Toate sistemele funcționale! <Zap size={18} />
+                Toate sistemele funcționale în {formateazaTimp(timpScurs)}! <Zap size={18} />
               </div>
             )}
           </div>
@@ -284,7 +340,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               const esteRezolvatPanou = 
                 (panou.id === 'dreapta-sus' && moduleRezolvate.includes('m3')) ||
                 (panou.id === 'stanga-sus' && moduleRezolvate.includes('m2')) ||
-                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1'));
+                (panou.id === 'sus-centru' && moduleRezolvate.includes('m1')); 
                 
               return (
                 <div
@@ -294,7 +350,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
                 >
                   <img src={panou.imagine} alt={panou.titlu} onError={(e) => console.error("Eroare poză", panou.imagine)} />
                   <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                    {esteRezolvatPanou && <Check size={14} />}
+                    {panou.titlu} {esteRezolvatPanou && <Check size={14} />}
                   </div>
                 </div>
               );
@@ -329,7 +385,7 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
             >
               <img src={modulMasa.imagine} alt={modulMasa.titlu} onError={(e) => console.error("Eroare poză", modulMasa.imagine)} />
               <div className="tag-modul-jos" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                 {moduleRezolvate.includes("m8") && <Check size={14} />}
+                {modulMasa.titlu} {moduleRezolvate.includes("m8") && <Check size={14} />}
               </div>
             </div>
 
@@ -412,6 +468,20 @@ export default function CutieDialog({ dialogId, onDialogTerminat, totalModulePla
               adaugaLaProgresGlobal("m2");
             }
             setModul2Open(false);
+          }}
+        />
+      )}
+
+      {chemistryModalOpen && (
+        <ChemistryPuzzleModal
+          onClose={() => setChemistryModalOpen(false)}
+          onSolved={() => {
+            if (!moduleRezolvate.includes("m1")) {
+              const noiRezolvate = [...moduleRezolvate, "m1"];
+              setModuleRezolvate(noiRezolvate);
+              adaugaLaProgresGlobal("m1");
+            }
+            setChemistryModalOpen(false);
           }}
         />
       )}
